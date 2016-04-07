@@ -1,2 +1,6 @@
-#Example file for MS
-(print "Hello World")
+
+f main(){
+    echo("hello world!")
+    v i = 2 + 2;
+    echo(i);
+}

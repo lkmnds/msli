@@ -1,19 +1,15 @@
 import sys
 
-argv = sys.argv
-
-def msl_tokenize(s):
-    i = 0
-    tokens = []
-    while i < len(s):
-        char = s[i]
-    return tokens
+def evaluate(s):
+    def add(a, b): return a+b
+    return eval(s)
 
 def main():
-    if len(argv) > 1
-        with open(argv[1], 'r') as f:
-            p = tokenize(f.readAll())
-            execute(p)
+    args = sys.argv
+    if len(args) > 1:
+        with open(args[1], 'r') as f:
+            final = generate_code(f.read())
+            print(evaluate(final))
 
 if __name__ == '__main__':
     main()
