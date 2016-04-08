@@ -6,6 +6,8 @@ class Token:
     def __init__(self, _type, value):
         self.type = _type
         self.value = value
+    def __str__(self):
+        return str(self.value)
     def __repr__(self):
         return 'Token('+self.type+','+repr(self.value)+')'
 
@@ -17,7 +19,7 @@ class Node:
     def __str__(self):
         return str(self.value)
     def __repr__(self):
-        return 'Node('+self.type+','+repr(self.value)+':'+str(self.params)+')'
+        return 'Node('+self.type+', '+repr(self.value)+', '+str(self.params)+')'
 
 class AST:
     def __init__(self, _type, body):
@@ -63,6 +65,14 @@ def tokenize(s):
             tokens.append(Token('comma', ','))
             i += 1
             continue
+        elif char == '=':
+            tokens.append(Token('equal', '='))
+            i += 1
+            continue
+        elif char == '+':
+            tokens.append(Token('plus', '+'))
+            i += 1
+            continue
         elif char == ' ':
             tokens.append(Token('space', ' '))
             i += 1
@@ -93,9 +103,11 @@ def tokenize(s):
 
 def parse(tokens):
     i = 0
-    print(len(tokens))
+    string_marker = False
     def walk():
         nonlocal i
+        nonlocal string_marker
+
         token = tokens[i]
         if token.type == 'number':
             i += 1
@@ -105,13 +117,19 @@ def parse(tokens):
             return Node('Name', token.value)
         elif token.type == 'space':
             i += 1
-            return token.value
+            return Node('Space', token.value)
         elif token.type == 'newline':
             i += 1
             return Node('Newline', token.value)
         elif token.type == 'sign':
             i += 1
             return token.value
+        elif token.type == 'semicolon':
+            i += 1
+            return Node('Semicolon', token.value)
+        elif token.type == 'plus':
+            i += 1
+            return Node('Plus', token.value)
         elif token.type == 'string':
             i += 1
             token = tokens[i]
@@ -120,27 +138,54 @@ def parse(tokens):
             i += 1
             token = tokens[i]
             while token.type != 'string' and token.value != '"':
+                string_marker = True
                 n.value += str(walk())
                 token = tokens[i]
+            string_marker = False
 
             i += 1
             return n
         elif token.type == 'paren':
-            fname = tokens[i-1] #get identifier
-            i += 1
-            token = tokens[i] #skip parenthesis
-            n = Node('CallExpression', {'name': fname, 'params': [None]})
+            if not string_marker:
+                fname = tokens[i-1] #get identifier
+                i += 1
+                token = tokens[i] #skip parenthesis
+                n = Node('CallExpression', {'name': fname, 'params': [None]})
 
-            while token.type != 'paren' and token.value != ')':
-                cp = 0
-                if token.type != 'comma':
-                    n.value['params'][cp] = walk()
-                else:
-                    cp += 1
+                while token.type != 'paren' and token.value != ')':
+                    cp = 0
+                    if token.type != 'comma':
+                        n.value['params'][cp] = walk()
+                    else:
+                        cp += 1
+                    token = tokens[i]
+
+                i += 1 #close parenthesis
+                return n
+            else:
+                i += 1
+                return token.value
+        elif token.type == 'equal': #Now we enter the world of tokens.
+            #get variable name
+            node = Node("Assignment", {'var':'', 'expr':''})
+            n = i
+            while token == 'space':
+                n -= 1
+                token = tokens[n]
+            node.value['var'] = Node(token.type, token.value) #got our variable
+            i += 1
+
+            #get expression until semicolon
+            while token.type != 'semicolon':
+                node.value['expr'] += str(token)
+                i += 1
                 token = tokens[i]
 
-            i += 1 #close parenthesis
-            return n
+            print(node.value['var'])
+            print(node.value['expr'])
+
+            i += 1
+            return node.value['var']
         else:
             raise Exception("Error parsing token " + repr(token))
 
@@ -168,7 +213,11 @@ def traverse(ast, visitor):
             pass
         elif node.type == 'Newline':
             pass
-        elif node.type == 'Name':
+        elif node.type == 'Semicolon':
+            pass
+        elif node.type == 'Name' or node.type == 'name':
+            pass
+        elif node.type == 'Space':
             pass
         else:
             raise Exception("Error traversing node type " + node.type)
@@ -207,8 +256,11 @@ def execnode(node):
             for n in node.arguments:
                 execnode(n)
     elif node.type == 'ExpressionStatement':
-        if node.expression.callee.value.value == 'echo':
+        fn = node.expression.callee.value.value
+        if fn == 'echo':
             print(node.expression.arguments[0])
+        else:
+            raise Exception("Function not defined: " + fn)
     elif node.type == 'Identifier':
         return node.name
     elif node.type == 'NumberLiteral':
