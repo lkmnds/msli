@@ -10,5 +10,5 @@ My Simple Language Intepreter
 ```bash
 git clone https://github.com/lkmnds/msli.git
 cd msli
-python msli.py
+python msl.py hello.msl
 ```
