@@ -1,6 +1,1 @@
-
-f main(){
-    echo("hello world!")
-    v i = 2 + 2;
-    echo(i);
-}
+"hello world"
