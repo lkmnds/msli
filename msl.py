@@ -170,22 +170,23 @@ def parse(tokens):
             node = Node("Assignment", {'var':'', 'expr':''})
             n = i
             while token == 'space':
+                print(token)
                 n -= 1
                 token = tokens[n]
+            token = tokens[i-n]
             node.value['var'] = Node(token.type, token.value) #got our variable
             i += 1
+            token = tokens[i]
 
             #get expression until semicolon
             while token.type != 'semicolon':
-                node.value['expr'] += str(token)
+                if token.type != 'space':
+                    node.value['expr'] += str(token)
                 i += 1
                 token = tokens[i]
 
-            print(node.value['var'])
-            print(node.value['expr'])
-
             i += 1
-            return node.value['var']
+            return node
         else:
             raise Exception("Error parsing token " + repr(token))
 
@@ -202,6 +203,7 @@ def traverse(ast, visitor):
             traverse_node(e, p)
 
     def traverse_node(node, parent):
+        print(node)
         if node.type in visitor:
             visitor[node.type](node, parent)
 
@@ -209,6 +211,8 @@ def traverse(ast, visitor):
             traverse_array(node.body, node)
         elif node.type == 'CallExpression':
             traverse_array(node.value['params'], node)
+        elif node.type == 'Assignment':
+            traverse_array(node.value['expr'], node)
         elif node.type == 'StringExpression':
             pass
         elif node.type == 'Newline':
@@ -236,11 +240,16 @@ def transform(ast):
             exp = Expression('ExpressionStatement', expression=exp)
         p._context.append(exp)
 
+    def assignment(n, p):
+        n._context = n.value['expr']
+        pass
+
     traverse(ast, {
         'StringExpression': (lambda n, p:
             p._context.append(Node('StringExpression', n.value))
         ),
-        'CallExpression': call_expression
+        'CallExpression': call_expression,
+        'Assignment': assignment,
     })
 
     return newAst
@@ -252,9 +261,7 @@ def execnode(node):
     elif node.type == 'StringExpression':
         return node.value
     elif node.type == 'CallExpression':
-        if node.callee == 'echo':
-            for n in node.arguments:
-                execnode(n)
+        pass
     elif node.type == 'ExpressionStatement':
         fn = node.expression.callee.value.value
         if fn == 'echo':
@@ -282,6 +289,7 @@ def main():
             nAst = transform(ast)
             pprint.pprint(nAst)
 
+            print("--MSL: EXECUTION--")
             execnode(nAst)
 
 if __name__ == '__main__':

@@ -1,2 +1,2 @@
-i = i + 1;
 echo("hello world");
+i = 1 + 1;
