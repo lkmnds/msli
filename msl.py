@@ -167,23 +167,26 @@ def parse(tokens):
                 return token.value
         elif token.type == 'equal': #Now we enter the world of tokens.
             #get variable name
-            node = Node("Assignment", {'var':'', 'expr':''})
+            #node = Node("Assignment", {'var':'', 'expr':''})
+            node = Node('Assignment', {'name': '', 'params': [None]})
             n = i
             while token == 'space':
-                print(token)
                 n -= 1
                 token = tokens[n]
             token = tokens[i-n]
-            node.value['var'] = Node(token.type, token.value) #got our variable
+
+            node.value['name'] = Node(token.type, token.value) #got our variable
             i += 1
             token = tokens[i]
 
             #get expression until semicolon
+            s = ''
             while token.type != 'semicolon':
                 if token.type != 'space':
-                    node.value['expr'] += str(token)
+                    s += str(token)
                 i += 1
                 token = tokens[i]
+            node.value['params'] = Expression('ExpressionStatement', expression=s)
 
             i += 1
             return node
@@ -212,7 +215,7 @@ def traverse(ast, visitor):
         elif node.type == 'CallExpression':
             traverse_array(node.value['params'], node)
         elif node.type == 'Assignment':
-            traverse_array(node.value['expr'], node)
+            traverse_array(node.value['params'], node)
         elif node.type == 'StringExpression':
             pass
         elif node.type == 'Newline':
@@ -241,8 +244,10 @@ def transform(ast):
         p._context.append(exp)
 
     def assignment(n, p):
-        n._context = n.value['expr']
-        pass
+        print(n)
+        print(p)
+        n._context = n.value
+        p._context.append(Expression("ExpressionStatement", n.value['params']))
 
     traverse(ast, {
         'StringExpression': (lambda n, p:
