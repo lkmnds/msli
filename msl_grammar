@@ -1,0 +1,4 @@
+block: '{' [suite] '}'
+functiondef: 'f' NAME parameters block
+decl: NAME '=' stmt
+
