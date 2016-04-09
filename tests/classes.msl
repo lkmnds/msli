@@ -1,0 +1,14 @@
+
+cl Class {
+	f Init(_, value){
+		_.value = value;
+	}
+	f __int(_):
+		ret (int)_.value;
+	}
+}
+
+f main(){
+	inst = Class(3);
+	echo((int)inst.value);
+}

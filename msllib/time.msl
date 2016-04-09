@@ -1,0 +1,7 @@
+impr Internals = intr
+
+f time(){
+	ret intr.__time()
+}
+
+intr = null
