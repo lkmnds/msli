@@ -1,23 +1,18 @@
-impr Internals = intr #import Internals library
+impr Internals : intr
 
-# classes
 Exception = intr.Exception
 
 IOError = Exception.IOError
 TypeError = Exception.TypeError
 
-# types
 iter = intr.Iterator
 keymap = intr.KeyMap
 
-# functions
 echo = intr.echo
 len = intr.len
 
-# extension methods
 string.split = intr.strsplit
 
-# export all local vars to the global scope
 ._gexport(._locals())
 
 intr = null

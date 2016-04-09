@@ -35,6 +35,8 @@ class Expression:
         self.callee = callee
         self.arguments = arguments
         self.expression = expression
+    def __repr__(self):
+        return 'Expression('+str(self.callee)+', '+str(self.arguments)+', '+str(self.expression)+')'
 
 def tokenize(s):
     i = 0
@@ -175,6 +177,7 @@ def parse(tokens):
                 token = tokens[n]
             token = tokens[i-n]
 
+            print("var %s" % token.value)
             node.value['name'] = Node(token.type, token.value) #got our variable
             i += 1
             token = tokens[i]
@@ -215,7 +218,7 @@ def traverse(ast, visitor):
         elif node.type == 'CallExpression':
             traverse_array(node.value['params'], node)
         elif node.type == 'Assignment':
-            traverse_array(node.value['params'], node)
+            traverse_array(node.value['params'].arguments, node)
         elif node.type == 'StringExpression':
             pass
         elif node.type == 'Newline':
@@ -243,11 +246,10 @@ def transform(ast):
             exp = Expression('ExpressionStatement', expression=exp)
         p._context.append(exp)
 
-    def assignment(n, p):
-        print(n)
-        print(p)
+    def assignment(n, p): #node, AST
         n._context = n.value
-        p._context.append(Expression("ExpressionStatement", n.value['params']))
+        print(dir(n.value['params']))
+        p._context.append(Expression("ExpressionStatement", Node('Identifier', n.value['name']), expression=n.value['params']))
 
     traverse(ast, {
         'StringExpression': (lambda n, p:
@@ -259,20 +261,35 @@ def transform(ast):
 
     return newAst
 
-def execnode(node):
+def execnode(node, context):
     if node.type == 'Program':
         for n in node.body:
-            execnode(n)
+            execnode(n, context)
     elif node.type == 'StringExpression':
         return node.value
     elif node.type == 'CallExpression':
         pass
     elif node.type == 'ExpressionStatement':
-        fn = node.expression.callee.value.value
-        if fn == 'echo':
-            print(node.expression.arguments[0])
+        print('ExpStmt: %s' % node)
+        if hasattr(node, 'expression') and hasattr(node.expression, 'callee'):
+            try:
+                fn = node.expression.callee.value.value
+            except AttributeError:
+                print("msl: is that a real call stmt?")
+                return 0
+            if fn == 'echo':
+                print(node)
+                print(node.expression.arguments[0])
+            else:
+                raise Exception("Function not defined: " + fn)
         else:
-            raise Exception("Function not defined: " + fn)
+            print("!CallExpression")
+            identifier = node.callee
+            print("var %s" % identifier)
+            v = eval(str(node.expression))
+            print("eval %s" % str(v))
+            context['vars'][identifier] = v
+            print(context)
     elif node.type == 'Identifier':
         return node.name
     elif node.type == 'NumberLiteral':
@@ -283,19 +300,21 @@ def execnode(node):
 
 def main():
     args = sys.argv
+    codecxt = {
+        'vars': {}
+    }
     if len(args) > 1:
         with open(args[1], 'r') as f:
             tokens = tokenize(f.read())
             pprint.pprint(tokens)
 
             ast = parse(tokens)
-            pprint.pprint(ast)
 
             nAst = transform(ast)
             pprint.pprint(nAst)
 
             print("--MSL: EXECUTION--")
-            execnode(nAst)
+            execnode(nAst, codecxt)
 
 if __name__ == '__main__':
     main()
