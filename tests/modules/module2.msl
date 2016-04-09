@@ -1,0 +1,9 @@
+
+impr module1 : m1
+
+f main(args){
+	a = int.n(args[1])
+	b = int.n(args[2])
+	echo(m1.add(a, b))
+}
+

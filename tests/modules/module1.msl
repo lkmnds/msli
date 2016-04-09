@@ -1,0 +1,5 @@
+
+f add(a, b){
+	ret a+b;
+}
+
