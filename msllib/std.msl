@@ -1,4 +1,4 @@
-impr Internals : intr
+impr Internals : intr #import internal functions defined in the interpreter
 
 Exception = intr.Exception;
 
@@ -16,7 +16,7 @@ type = intr.__type;
 
 #implement len function
 f len(obj){
-    if(attr(obj, '__len__') and implements(obj, 'Iterator')){
+    if(attr(obj, '__len__') and isofcl(obj, 'Iterator')){
         ret obj.__len__()
     }else if(type(obj) == array){
         #use normal approach: treat as a array
@@ -51,6 +51,14 @@ f reduce(fn, lst){
         r += fn(r, lst[i]);
     }
     ret r;
+}
+
+f pairize(lst){
+    a = []
+    for(e in lst : i){
+        a.append([i, e])
+    }
+    ret a
 }
 
 string.split = intr.strsplit;
