@@ -1,0 +1,23 @@
+
+cl LivingThing {
+    f Init(_, name, say){
+        _.name = name;
+        _.say = say;
+    }
+    f say(_){
+        echo('%s says %s' % (_.name, _.say));
+    }
+}
+
+cl Dog < LivingThing {
+	f Init(_, name, say){
+        LivingThing.Init(_, name, say);
+    }
+}
+
+f main(){
+    bacteria = LivingThing('Bacteria', 'nothing');
+	dog = Dog('Dog', 'Awf');
+    bacteria.say();
+    dog.say();
+}

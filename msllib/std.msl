@@ -1,18 +1,70 @@
 impr Internals : intr
 
-Exception = intr.Exception
+Exception = intr.Exception;
 
-IOError = Exception.IOError
-TypeError = Exception.TypeError
+cl IOError < Exception {
+    f Init(_, message){
+        Exception.Init(_, message);
+    }
+}
 
-iter = intr.Iterator
-keymap = intr.KeyMap
+iter = intr.Iterator;
+keymap = intr.KeyMap;
 
-echo = intr.echo
-len = intr.len
+echo = intr.echo;
+type = intr.__type;
 
-string.split = intr.strsplit
+#implement len function
+f len(obj){
+    if(attr(obj, '__len__') and implements(obj, 'Iterator')){
+        ret obj.__len__()
+    }else if(type(obj) == array){
+        #use normal approach: treat as a array
+        i = 0
+        while(obj[i] != null){
+            i++;
+        }
+        ret i
+    }else{
+        #exception
+        call Expection("expected Iterator or Array.");
+    }
+}
 
-._gexport(._locals())
+#implement map function
+f map(fn, lst){
+    rv = :lst;
+    for(e in rv : i){
+        rv[i] = fn(e);
+    }
+    ret rv;
+}
 
-intr = null
+#implement reduce
+f reduce(fn, lst){
+    ##
+        using reduce:
+        reduce(lb x,y: x+y, [1, 2, 3, 4, 5]);
+    ##
+    r = 0;
+    for(e in lst : i){
+        r += fn(r, lst[i]);
+    }
+    ret r;
+}
+
+string.split = intr.strsplit;
+
+#export to global all of the local vars in the std code
+._gexport(._locals());
+
+#set garbage collector
+._gcstart();
+._gcset(20);
+
+#set intr object to deletion and set it to null
+._gc_object(intr, True);
+intr = null;
+
+#run garbage collector before execution
+._gcrun(true)
