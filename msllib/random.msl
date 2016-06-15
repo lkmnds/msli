@@ -1,4 +1,15 @@
-impr Internals = intr
+intr = .prg_get("Internals")
+
+impr time : time
+
+random_seed = time.time()
+
+f srand(seed){
+    if(seed == null){
+        ret random_seed = time.time()
+    }
+    ret random_seed = seed
+}
 
 f rand(){
     //TODO: the RNG
@@ -9,7 +20,13 @@ f random(min, max){
 }
 
 f crypto_random(bytes){
-    return intr.system.sysrand(bytes)
+    data = intr.sys.sysrand(bytes)
+
+    open Exception when:
+        len(data) == 0,
+        "No data returned".
+
+    ret data
 }
 
-intr = null; // Remove internal object from global scope
+.purge(intr, "Internals")

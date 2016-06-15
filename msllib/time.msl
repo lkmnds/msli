@@ -1,7 +1,7 @@
-impr Internals = intr
+intr = .prg_get("Internals")
 
 f time(){
-	ret intr.__time()
+    ret intr.sys.time()
 }
 
-intr = null
+.purge(intr, "Internals")

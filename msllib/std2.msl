@@ -125,17 +125,14 @@ f pairs(kmp){
 
 ## CLEANING STUFF
 
+.prg_init() # start purgatory
+
 # init GC
 .gc_start()
 .gc_set(40) # threshold of life of object(in calls)
 
-# remove internal functions from the user's usual hands
-intr = null;
-.gc_collect(intr); #collect it
-
-# safety feature(sanity test)
-.gc_set(intr, int.MAXVAL);
-.gc_collect(intr);
+# put internal lib in purgatory
+.purge(intr, "Internals")
 
 # run GC. ALWAYS. FOR EVER.
 .gc_run();
