@@ -1,0 +1,141 @@
+## CALL THE GOD OF CODE
+
+impr Internals : intr;
+# import internal functions from msl.py
+
+# declre intr as local for this file
+intr = .local(intr);
+
+.init(); # initialize interpreter functions
+
+## INITIALIZE BASIC TYPES
+
+int = .copy(intr.int)
+cint = .copy(.newCType("n>i", null))
+clli = .copy(.newCType("n>lli", null))
+
+cl long < int{
+    f init(_, val){
+        _.value = intr.int.generalize(val)
+    }
+    f _add(_, other){
+        ret intr.int.g_add(_.value, other.value)
+    }
+    f _sub(_, other){
+        ret intr.int.g_sub(_.value, other.value)
+    }
+
+    f _str(_){
+        ret _.value # it is already a string
+    }
+}
+
+# since we need iterators before strings, I'll write them here
+baseiter = .clcopy(intr.Iterator);
+
+cl iter < baseiter{
+    f init(_){
+        _.val = []
+        _.cursor = 0
+        if(type(initval) != null){
+            # work out initval and generate iterator
+            # based on it
+            # TODO: exactly this
+        }
+    }
+    f _iter(_){
+        v = .copy(_.val[cursor]) # so that v isn't deleted as referencing goes on
+        _.cursor++
+
+        # KILL HIM
+        del _.val[cursor]
+        ret v
+    }
+}
+
+
+# godstr: god of all strings, they are him
+godstr = .copy(intr.godstring);
+cstr = .copy(.newCType("n>s", null))
+
+cl unicode < godstr{
+    f init(_, val){
+        godstr.init(_, val);
+        # magic to interpret unicode
+    }
+
+    f _add(_, other){
+        if(other == ''){
+            ret _
+        }else{
+            ret godstr.concat(_, other)
+        }
+    }
+}
+
+str = .copy(unicode)
+
+## COPYING STUFF
+
+Exception = .copy(intr.Exception);
+IOError = .copy(intr.IOError);
+
+## WRITING STUFF
+
+f len(obj){
+    if(obj.__len == f (){} and isofcl(obj, "iter")){
+        ret obj.__len() # return the object's own way of length
+    }else if(isofcl(obj, "array")){
+        # treat object as array and work out the length
+        i = 0 # declare i as integer by default
+        i.type = .newCType("i>lli", i) # change to long long int
+
+        # loop through the object and done.
+        while(obj[i] != null){ i++; }
+
+        ret i;
+    }else{
+        send Exception:
+            "Expected Iterator or array."
+    }
+}
+
+# well, write strings to screen... isn't it?
+f echo(string){
+    # performance: convert string to C 'char'
+    string = .newCType("s->s", string, len(string))
+    for("char" in string.iter() : c){
+        write(intr.stdout, c)
+    }
+}
+
+# convert kmp.iter() to a {k,v} iterator
+# I don't know why someone would use this IF YOU HAVE KEYMAP.ITER()
+f pairs(kmp){
+    kmp_iterator = iter()
+    for({key, value} in kmp.iter() : _){
+        kmp_iterator.append(_); #srsly?
+    }
+    return kmp_iterator
+}
+
+# export all symbols to global scope
+.gs_export(.locals())
+
+
+## CLEANING STUFF
+
+# init GC
+.gc_start()
+.gc_set(40) # threshold of life of object(in calls)
+
+# remove internal functions from the user's usual hands
+intr = null;
+.gc_collect(intr); #collect it
+
+# safety feature(sanity test)
+.gc_set(intr, int.MAXVAL);
+.gc_collect(intr);
+
+# run GC. ALWAYS. FOR EVER.
+.gc_run();

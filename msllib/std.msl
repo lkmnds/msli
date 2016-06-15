@@ -45,6 +45,7 @@ f reduce(fn, lst){
     ##
         using reduce:
         reduce(lb x,y: x+y, [1, 2, 3, 4, 5]);
+        reduce(f (x, y) {ret x+y;}, [1, 2, 3, 4, 5])
     ##
     r = 0;
     for(e in lst : i){

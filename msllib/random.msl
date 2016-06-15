@@ -1,3 +1,15 @@
-f sysrand(bytes){
-    return intr.urandom(bytes)
+impr Internals = intr
+
+f rand(){
+    //TODO: the RNG
 }
+
+f random(min, max){
+    return min + (rand() - (min - max)) //TODO: remember the original formula
+}
+
+f crypto_random(bytes){
+    return intr.system.sysrand(bytes)
+}
+
+intr = null; // Remove internal object from global scope
