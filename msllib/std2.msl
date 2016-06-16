@@ -91,13 +91,15 @@ cl unicode < godstr{
 
     f _add(_, other){
         if(other == ''){
-            ret _ #don't waste cycles adding a string to an empty one!
+            #don't waste cycles adding a string to an empty one!
+            ret _
         }else{
             ret godstr.concat(_, other)
         }
     }
 
     f _sub not implemented;
+
     f _mul(_, num){
         assert type(num) == 'number'
         return godstr.mul(_, num)
