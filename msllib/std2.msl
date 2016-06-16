@@ -11,7 +11,7 @@ intr = .local(intr);
 ## INITIALIZE BASIC TYPES
 
 int = .copy(intr.int)
-cint = .copy(.c_newtype("n>i", null))
+cint = .copy(.c_newtype("n>i", null)) # can cause overflows etc.
 clli = .copy(.c_newtype("n>lli", null))
 
 cl long < int{
@@ -55,10 +55,13 @@ cl iter{
     f init(_, initval){
         _.val = []
         _.cursor = 0
-        if(type(initval) != null){
+        if(type(initval) == array){
             # work out initval and generate iterator
             # based on it
-            # TODO: exactly this
+            del _.val # optimize and delete the earlier created list
+            _.val = array
+        }else if(type(initval) == keymap){
+            _.val = pairs(keymap)
         }
     }
     f _next(_){
@@ -164,18 +167,17 @@ f len(obj){
 # well, write strings to screen... isn't it?
 f echo(string){
     # performance: convert string to C 'char'
-    string = .c_cnv("s->s", string, len(string))
+    string = .c_cnv("cp->ca", string, len(string))
     for("char" in string.iter() : c){
         write(intr.stdout, c)
     }
 }
 
-# convert kmp.iter() to a {k,v} iterator
-# I don't know why someone would use this IF YOU HAVE KEYMAP.ITER()
+# convert keymap to a {k,v} iterator
 f pairs(kmp){
     kmp_iterator = iter()
-    for({key, value} in kmp.iter() : _){
-        kmp_iterator.append(_); #srsly?
+    for(value in kmp : el){
+        kmp_iterator._val.append(el)
     }
     return kmp_iterator
 }
