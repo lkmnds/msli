@@ -11,8 +11,8 @@ intr = .local(intr);
 ## INITIALIZE BASIC TYPES
 
 int = .copy(intr.int)
-cint = .copy(.newCType("n>i", null))
-clli = .copy(.newCType("n>lli", null))
+cint = .copy(.c_newtype("n>i", null))
+clli = .copy(.c_newtype("n>lli", null))
 
 cl long < int{
     f init(_, val){
@@ -30,10 +30,28 @@ cl long < int{
     }
 }
 
+array = .copy(intr.array)
+list = .copy(array)
+
+cl keymap < {
+    f init(_){
+        basekm.init(_)
+    }
+    f _len(_){
+        ret len(_._km_vals)
+    }
+    f _get(_, key){
+        ret _._baseget(key)
+    }
+    f _put(_, key, value){
+        ret _._baseput(key)
+    }
+}
+
 # since we need iterators before strings, I'll write them here
 baseiter = .clcopy(intr.Iterator);
 
-cl iter < baseiter{
+cl iter{
     f init(_){
         _.val = []
         _.cursor = 0
@@ -53,23 +71,39 @@ cl iter < baseiter{
     }
 }
 
+cl fastiter < baseiter{
+    # probably faster than iter
+    # but we don't know if it is really more efficient than normal iter
+    f init(_){
+        baseiter.init(_)
+    }
+}
 
 # godstr: god of all strings, they are him
 godstr = .copy(intr.godstring);
-cstr = .copy(.newCType("n>s", null))
+cstr = .copy(.c_newtype("n>s", null))
+cunicode = .copy(.c_newtype("n>us", null))
+
+godstr.set_base(cunicode);
 
 cl unicode < godstr{
     f init(_, val){
         godstr.init(_, val);
-        # magic to interpret unicode
+        # godstr handles unicode for us
     }
 
     f _add(_, other){
         if(other == ''){
-            ret _
+            ret _ #don't waste cycles adding a string to an empty one!
         }else{
             ret godstr.concat(_, other)
         }
+    }
+
+    f _sub not implemented;
+    f _mul(_, num){
+        assert type(num) == 'number'
+        return godstr.mul(_, num)
     }
 }
 
@@ -77,8 +111,36 @@ str = .copy(unicode)
 
 ## COPYING STUFF
 
-Exception = .copy(intr.Exception);
-IOError = .copy(intr.IOError);
+file = .copy(intr.fileobject);
+
+Exception = .copy(intr.GeneralError);
+Error = .copy(intr.GeneralError);
+cl IOError < Error{
+    f init(){
+        Error.init(_)
+    }
+    f _call(){
+        _.init()
+    }
+}
+
+## FILE STUFF
+
+f write(fileobj, data){
+    if(data == null){
+        data = fileobj
+        fileobj = intr.stdout
+    }
+    ret intr.fwrite(fileobj, data)
+}
+
+f read(fileobj, data){
+    if(data == null){
+        data = fileobj
+        fileobj = intr.stdin
+    }
+    ret intr.fread(fileobj, data)
+}
 
 ## WRITING STUFF
 
@@ -103,7 +165,7 @@ f len(obj){
 # well, write strings to screen... isn't it?
 f echo(string){
     # performance: convert string to C 'char'
-    string = .newCType("s->s", string, len(string))
+    string = .c_cnv("s->s", string, len(string))
     for("char" in string.iter() : c){
         write(intr.stdout, c)
     }
