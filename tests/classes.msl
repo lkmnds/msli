@@ -1,14 +1,14 @@
 
 cl Class {
-	f Init(_, value){
+	f init(_, value){
 		_.value = value;
 	}
-	f __int(_):
-		ret (int)_.value;
+	f _int(_){
+		ret .c_cnv('i>i', _.value)
 	}
 }
 
 f main(){
 	inst = Class(3);
-	echo((int)inst.value);
+	echo(inst.value._int());
 }

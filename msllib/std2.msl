@@ -52,7 +52,7 @@ cl keymap < {
 baseiter = .clcopy(intr.Iterator);
 
 cl iter{
-    f init(_){
+    f init(_, initval){
         _.val = []
         _.cursor = 0
         if(type(initval) != null){
@@ -61,7 +61,7 @@ cl iter{
             # TODO: exactly this
         }
     }
-    f _iter(_){
+    f _next(_){
         v = .copy(_.val[cursor]) # so that v isn't deleted as referencing goes on
         _.cursor++
 
@@ -69,6 +69,11 @@ cl iter{
         del _.val[cursor]
         ret v
     }
+    f _del(){
+        del _.val
+        del _.cursor
+    }
+    f _gc_collect() not implemented;
 }
 
 cl fastiter < baseiter{
@@ -145,7 +150,7 @@ f read(fileobj, data){
 ## WRITING STUFF
 
 f len(obj){
-    if(obj.__len == f (){} and isofcl(obj, "iter")){
+    if(obj.__len == f (){}){
         ret obj.__len() # return the object's own way of length
     }else if(isofcl(obj, "array")){
         # treat object as array and work out the length
@@ -198,3 +203,8 @@ f pairs(kmp){
 
 # run GC. ALWAYS. FOR EVER.
 .gc_run();
+
+# if main function is already at global scope, run it
+if(.g_scope("main") == f(){} && intr.run_main == true){
+    .g_scope("main")();
+}

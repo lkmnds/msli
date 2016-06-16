@@ -1,6 +1,6 @@
 
 cl LivingThing {
-    f Init(_, name, say){
+    f init(_, name, say){
         _.name = name;
         _.say = say;
     }
@@ -10,14 +10,14 @@ cl LivingThing {
 }
 
 cl Dog < LivingThing {
-	f Init(_, name, say){
+    f init(_, name, say){
         LivingThing.Init(_, name, say);
     }
 }
 
 f main(){
     bacteria = LivingThing('Bacteria', 'nothing');
-	dog = Dog('Dog', 'Awf');
+    dog = Dog('Dog', 'Awf');
     bacteria.say();
     dog.say();
 }
