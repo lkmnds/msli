@@ -76,14 +76,6 @@ cl iter{
     f _gc_collect() not implemented;
 }
 
-cl fastiter < baseiter{
-    # probably faster than iter
-    # but we don't know if it is really more efficient than normal iter
-    f init(_){
-        baseiter.init(_)
-    }
-}
-
 # godstr: god of all strings, they are him
 godstr = .copy(intr.godstring);
 cstr = .copy(.c_newtype("n>s", null))
