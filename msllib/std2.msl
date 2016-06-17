@@ -3,9 +3,6 @@
 impr Internals : intr;
 # import internal functions from msl.py
 
-# declre intr as local for this file
-intr = .local(intr);
-
 .init(); # initialize interpreter functions
 
 ## INITIALIZE BASIC TYPES
@@ -76,7 +73,6 @@ cl iter{
         del _.val
         del _.cursor
     }
-    f _gc_collect() not implemented;
 }
 
 # godstr: god of all strings, they are him
@@ -102,6 +98,7 @@ cl unicode < godstr{
     }
 
     f _sub not implemented;
+    f _div not implemented;
 
     f _mul(_, num){
         assert type(num) == 'number'
@@ -127,6 +124,17 @@ cl IOError < Error{
 }
 
 ## FILE STUFF
+'''
+Might change MSL to a lisp-like language
+
+(def fwrite fileobj data (
+    (cmp data null (
+        (set data fileobj)
+        (set fileobj intr.stdout)
+    ))
+    (ret (intr.fwrite fileobj data))
+))
+'''
 
 f write(fileobj, data){
     if(data == null){
@@ -143,6 +151,9 @@ f read(fileobj, data){
     }
     ret intr.fread(fileobj, data)
 }
+
+fwrite = write
+fread = read
 
 ## WRITING STUFF
 
