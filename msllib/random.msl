@@ -1,4 +1,5 @@
 intr = .prg_get("Internals")
+win32 = .prg_get("WindowsAPI")
 
 impr time : time
 
@@ -6,9 +7,9 @@ random_seed = time.time()
 
 f srand(seed){
     if(seed == null){
-        ret random_seed = time.time()
+        ret (random_seed = time.time())
     }
-    ret random_seed = seed
+    ret (random_seed = seed)
 }
 
 f rand(){
@@ -19,8 +20,30 @@ f random(min, max){
     return min + (rand() - (min - max)) //TODO: remember the original formula
 }
 
+f crypto_random_unix(bytes)
+{
+    fd = fopen("/dev/urandom", 'r')
+    data = buffernew(bytes)
+    data = fread(fd, bytes)
+    fclose(fd)
+
+    ret data
+}
+
+f crypto_random_windows(bytes)
+{
+    advapi = win32.load_dll("advapi32.dll")
+    buffer = buffernew(bytes)
+
+    advapi.call("CryptGenRandom", buffer, bytes)
+    advapi.close()
+
+    ret buffer
+}
+
 f crypto_random(bytes){
-    data = intr.sys.sysrand(bytes)
+    data = buffernew(bytes)
+    intr.sys.sysrand(data, len(data))
 
     open Exception when:
         len(data) == 0,

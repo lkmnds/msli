@@ -164,6 +164,27 @@ f len(obj){
     }
 }
 
+f map(fn, lst){
+    rv = :lst # copy of list(so referencing doesn't fuck it up)
+    for([index, value] in pairs(rv) : index,value){
+        rv[index] = fn(value);
+    }
+    ret rv;
+}
+
+f reduce(fn, lst){
+    ##
+        using reduce:
+        reduce(lb x,y: x+y, [1, 2, 3, 4, 5]);
+        reduce(f (x, y) {ret x+y;}, [1, 2, 3, 4, 5])
+    ##
+    r = 0;
+    for(el in lst : value){
+        r = fn(r, value);
+    }
+    ret r;
+}
+
 # well, write strings to screen... isn't it?
 f echo(string){
     # performance: convert string to C 'char'
@@ -199,8 +220,3 @@ f pairs(kmp){
 
 # run GC. ALWAYS. FOR EVER.
 .gc_run();
-
-# if main function is already at global scope, run it
-if(.g_scope("main") == f(){} && intr.run_main == true){
-    .g_scope("main")();
-}
