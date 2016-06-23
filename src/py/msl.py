@@ -10,6 +10,9 @@ import msl_types as mtypes
 
 enviroment = {
     '+': lambda a,b: a+b,
+    '-': lambda a,b: a-b,
+    '*': lambda a,b: a*b,
+    '/': lambda a,b: a/b,
 }
 
 def msl_read(string):
@@ -24,6 +27,7 @@ def eval_ast(ast, env):
         for el in ast.values:
             val = eval_ast(el, env)
             newlist.append(val)
+        return newlist
     else:
         return ast
 
@@ -34,9 +38,9 @@ def msl_eval(ast, env):
                 return ast
             else:
                 d = eval_ast(ast, env)
-                fname = d[0]
-                fargs = d[1:]
-                return env[fname](*fargs)
+                func = d.values[0]
+                fargs = d.values[1:]
+                return func(*fargs)
     else:
         return eval_ast(ast, env)
     return ast
@@ -45,7 +49,7 @@ def msl_print(exp):
     return printer.pr_str(exp, True)
 
 def msl_rep(string):
-    return msl_print(msl_eval(msl_read(string), {}))
+    return msl_print(msl_eval(msl_read(string), enviroment))
 
 def main():
     # repl loop

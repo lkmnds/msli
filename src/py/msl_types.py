@@ -24,6 +24,21 @@ class MslNumber(MslObject):
         MslObject.__init__(self, 'num')
         self.num = int(num)
 
+    def __add__(self, other):
+        return MslNumber(self.num + other.num)
+
+    def __sub__(self, other):
+        return MslNumber(self.num - other.num)
+
+    def __mul__(self, other):
+        return MslNumber(self.num * other.num)
+
+    def __div__(self, other):
+        return MslNumber(self.num / other.num)
+
+    def __truediv__(self, other):
+        return MslNumber(self.num / other.num)
+
 class MslStr(MslObject, str):
     def __new__(cls, *args, **kw):
         return str.__new__(cls, *args, **kw)
