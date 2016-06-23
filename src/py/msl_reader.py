@@ -23,15 +23,56 @@ def tokenize(str):
 def read_form(reader):
     tok = reader.peek()
     val = None
-    if tok == '(':
+    if tok[0] == ';':
+        reader.next()
+        val = None
+    elif tok == '\'':
+        reader.next()
+        return mtypes.MslList([
+            mtypes.MslSymbol('quote'),
+            read_form(reader)
+        ])
+    elif tok == '`':
+        reader.next()
+        return mtypes.MslList([
+            mtypes.MslSymbol('quasiquote'),
+            read_form(reader)
+        ])
+    elif tok == '~':
+        reader.next()
+        return mtypes.MslList([
+            mtypes.MslSymbol('unquote'),
+            read_form(reader)
+        ])
+    elif tok == '~@':
+        reader.next()
+        return mtypes.MslList([
+            mtypes.MslSymbol('slice-unquote'),
+            read_form(reader)
+        ])
+
+    elif tok == ')':
+        raise Exception("Unexpected ')'")
+    elif tok == '(':
         val = read_list(reader)
+
+    elif tok == ']':
+        raise Exception("Unexpected ']'")
+    elif tok == '[':
+        val = read_vector(reader)
+
+    elif tok == '}':
+        raise Exception("Unexpected '}'")
+    elif tok == '{':
+        val = read_hashmap(reader)
+
     else:
         val = read_atom(reader)
 
     return val
 
-def read_seq(reader, start='(', end=')'):
-    ast = mtypes.MslList([])
+def read_seq(reader, start='(', end=')', init=mtypes.MslList):
+    ast = init([])
     token = reader.next()
     if token != start: raise Exception("Unexpected %s" % token)
 
@@ -40,10 +81,17 @@ def read_seq(reader, start='(', end=')'):
     while token != end:
         if not token:
             raise Exception("Expected '%s', got EOF" % end)
-        ast.values.append(read_form(reader))
+        ast.append(read_form(reader))
         token = reader.peek()
 
     return ast
+
+def read_vector(reader):
+    return read_seq(reader, '[', ']', mtypes.MslVector)
+
+def read_hashmap(reader):
+    lst = read_seq(reader, '{', '}', list)
+    return mtypes.MslHashmap(lst)
 
 def read_list(reader):
     return read_seq(reader)
@@ -65,6 +113,8 @@ def read_atom(reader):
             return mtypes.MslStr(_unescape(token[1:-1]))
         else:
             raise Exception("Expected '\"', got EOF")
+    elif token[0] == ':':
+        return mtypes.MslKeyword(token[1:])
     elif token == 'nil':
         return mtypes.MslNil()
     elif token == 'true':

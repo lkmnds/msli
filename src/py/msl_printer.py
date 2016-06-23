@@ -26,5 +26,19 @@ def pr_str(v, print_readably=False):
             res.append(val)
         res = ' '.join(res)
         return "(%s)" % res
+    elif v.type == 'vec':
+        res = []
+        for el in v.values:
+            val = pr_str(el, print_readably)
+            res.append(val)
+        res = ' '.join(res)
+        return "[%s]" % res
+    elif v.type == 'hashmap':
+        res = []
+        for k in v.hm.keys():
+            res.append(pr_str(k))
+            res.append(pr_str(v.hm[k], print_readably))
+        res = ' '.join(res)
+        return "{%s}" % res
     else:
-        raise Exception("No type found")
+        raise Exception("No type found: %s" % v.type)

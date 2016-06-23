@@ -1,35 +1,70 @@
 
-class MslType:
+class MslObject:
     def __init__(self, valtype):
         self.type = valtype
 
-class MslList(MslType):
+class MslList(MslObject):
     def __init__(self, lst):
-        MslType.__init__(self, 'list')
+        MslObject.__init__(self, 'list')
         self.values = lst
 
-class MslSymbol(MslType):
+    def append(self, v):
+        self.values.append(v)
+
+class MslSymbol(MslObject):
     def __init__(self, val=None):
-        MslType.__init__(self, 'symbol')
+        MslObject.__init__(self, 'symbol')
         self.symval = val
 
-class MslNumber(MslType):
+class MslNumber(MslObject):
     def __init__(self, num=None):
-        MslType.__init__(self, 'num')
+        MslObject.__init__(self, 'num')
         self.num = int(num)
 
-class MslStr(MslType, str):
+class MslStr(MslObject, str):
     def __new__(cls, *args, **kw):
         return str.__new__(cls, *args, **kw)
     def __init__(self, string):
-        MslType.__init__(self, 'str')
+        MslObject.__init__(self, 'str')
         self.value = string
 
-class MslNil(MslType):
+class MslNil(MslObject):
     def __init__(self):
-        MslType.__init__(self, 'nil')
+        MslObject.__init__(self, 'nil')
 
-class MslBool(MslType):
+class MslBool(MslObject):
     def __init__(self, val=False):
-        MslType.__init__(self, 'bool')
+        MslObject.__init__(self, 'bool')
         self.value = val
+
+class MslKeyword(MslObject):
+    def __init__(self, val):
+        MslObject.__init__(self, 'keyword')
+        if val[0] == "\u029e":
+            self.value = val
+        else:
+            self.value = "\u029e" + val
+
+class MslVector(MslObject):
+    def __init__(self, val=[]):
+        MslObject.__init__(self, 'vec')
+        self.values = val
+    def __add__(self, rhs): return MslVector(self.values.__add__(self, rhs))
+    def __getitem__(self, i):
+        if type(i) == slice: return MslVector(self.values.__getitem__(self, i))
+        elif i >= len(self): return None
+        else:                return self.value.__getitem__(self, i)
+    def __getslice__(self, *a): return MslVector(self.values.__getslice__(self, *a))
+
+    def append(self, v):
+        self.values.append(v)
+
+class MslHashmap(MslObject):
+    def __init__(self, val=[]):
+        MslObject.__init__(self, 'hashmap')
+        self.hm = {}
+        for i in range(0, len(val), 2):
+            self.hm[val[i]] = val[i+1]
+        self.values = self.hm
+    def append(self, value):
+        print(value)
