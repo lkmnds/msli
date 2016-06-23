@@ -19,13 +19,16 @@ def msl_read(string):
     return reader.read_str(string)
 
 def eval_ast(ast, env):
+    print(ast.type)
     if ast.type == 'symbol':
         if ast.symval in env:
             return env[ast.symval]
+        else:
+            raise Exception("Symbol %s not found" % ast.symval)
     elif ast.type == 'list':
         newlist = mtypes.MslList([])
         for el in ast.values:
-            val = eval_ast(el, env)
+            val = msl_eval(el, env)
             newlist.append(val)
         return newlist
     else:
@@ -41,6 +44,8 @@ def msl_eval(ast, env):
                 func = d.values[0]
                 fargs = d.values[1:]
                 return func(*fargs)
+        else:
+            return eval_ast(ast, env)
     else:
         return eval_ast(ast, env)
     return ast
