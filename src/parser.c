@@ -1,27 +1,32 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-typedef struct {
-	char val;
-} msl_token;
+#include "parser.h"
 
-typedef struct {
-	int a;
-	msl_token tokens[];
-} msl_tokens_t;
+msl_token_t *new_token(char *val){
+	msl_token_t *ret = malloc(sizeof(msl_token_t));
+	ret->val = strdup(val);
+	return ret;
+}
 
 msl_tokens_t *new_tokens(){
 	msl_tokens_t *tok = malloc(sizeof(msl_tokens_t));
-
 	return tok;
 }
 
 msl_tokens_t *msl_parse(char string[]){
-	char *string_ptr;
+	char *schar = string;
 	msl_tokens_t *ret = new_tokens();
 
-	for(string_ptr = string; *string_ptr != '\0'; string_ptr++){
-		*string_ptr = 'A';
+	long toklength = 0;
+
+	while(*schar){
+		if(strcmp("!", schar) != 0){
+			ret->tokens[toklength] = new_token(schar);
+		}
+
+		toklength++;
+		*schar++;
 	}
 	return ret;
 }

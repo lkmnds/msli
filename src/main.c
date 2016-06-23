@@ -25,12 +25,13 @@
 #endif
 
 #include "parser.h"
+#include "ast.h"
 
 #define MSL_VERSION "0.0.0.1"
 #define MSL_BUILD "0"
 
 int main(int argc, char** argv) {
-	printf("Lispy Version %s\n", MSL_VERSION);
+	printf("MSL v%s\n", MSL_VERSION);
 	printf("Press Ctrl+c to Exit\n");
 
 	while (1) {
@@ -41,8 +42,13 @@ int main(int argc, char** argv) {
 		printf("%s\n", input);
 
 		msl_tokens_t *tokens_table = msl_parse(input);
-		free(tokens_table);
+		msl_ast_t *ast = msl_new_ast(tokens_table);
 
+		printf("freeing ast\n", input);
+		msl_ast_free(ast);
+
+		printf("freeing toktable\n", input);
+		free(tokens_table);
 		free(input);
 	}
 
