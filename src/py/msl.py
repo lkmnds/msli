@@ -6,10 +6,39 @@ argv = sys.argv
 import msl_reader as reader
 import msl_printer as printer
 
+import msl_types as mtypes
+
+enviroment = {
+    '+': lambda a,b: a+b,
+}
+
 def msl_read(string):
     return reader.read_str(string)
 
+def eval_ast(ast, env):
+    if ast.type == 'symbol':
+        if ast.symval in env:
+            return env[ast.symval]
+    elif ast.type == 'list':
+        newlist = mtypes.MslList([])
+        for el in ast.values:
+            val = eval_ast(el, env)
+            newlist.append(val)
+    else:
+        return ast
+
 def msl_eval(ast, env):
+    if hasattr(ast, 'type'):
+        if ast.type == 'list':
+            if len(ast) == 0:
+                return ast
+            else:
+                d = eval_ast(ast, env)
+                fname = d[0]
+                fargs = d[1:]
+                return env[fname](*fargs)
+    else:
+        return eval_ast(ast, env)
     return ast
 
 def msl_print(exp):

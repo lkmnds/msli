@@ -11,6 +11,9 @@ class MslList(MslObject):
     def append(self, v):
         self.values.append(v)
 
+    def __len__(self):
+        return len(self.values)
+
 class MslSymbol(MslObject):
     def __init__(self, val=None):
         MslObject.__init__(self, 'symbol')
@@ -58,6 +61,9 @@ class MslVector(MslObject):
 
     def append(self, v):
         self.values.append(v)
+
+    def __len__(self):
+        return len(self.values)
 
 class MslHashmap(MslObject):
     def __init__(self, val=[]):
