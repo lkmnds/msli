@@ -23,7 +23,9 @@ def tokenize(str):
 def read_form(reader):
     tok = reader.peek()
     val = None
-    if tok[0] == ';':
+    if not tok:
+        val = mtypes.MslNil()
+    elif tok[0] == ';':
         reader.next()
         val = None
     elif tok == '\'':
