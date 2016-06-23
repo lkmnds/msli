@@ -28,7 +28,7 @@
 #include "ast.h"
 
 #define MSL_VERSION "0.0.0.1"
-#define MSL_BUILD "0"
+#define MSL_BUILD "1"
 
 int main(int argc, char** argv) {
 	printf("MSL v%s\n", MSL_VERSION);
@@ -45,7 +45,7 @@ int main(int argc, char** argv) {
 		msl_ast_t *ast = msl_new_ast(tokens_table);
 
 		printf("freeing ast\n", input);
-		msl_ast_free(ast);
+		free(ast);
 
 		printf("freeing toktable\n", input);
 		free(tokens_table);
