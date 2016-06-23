@@ -3,14 +3,18 @@ import readline
 import sys
 argv = sys.argv
 
+import msl_reader as reader
+import msl_printer as printer
+
 def msl_read(string):
-    return string
+    return reader.read_str(string)
 
 def msl_eval(ast, env):
     return ast
 
 def msl_print(exp):
-    return exp
+    print(exp)
+    return printer.pr_str(exp)
 
 def msl_rep(string):
     return msl_print(msl_eval(msl_read(string), {}))
