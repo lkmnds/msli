@@ -1,7 +1,0 @@
-
-f myfunc()
-{
-	echo("Calling echo from a function.");
-}
-
-myfunc();

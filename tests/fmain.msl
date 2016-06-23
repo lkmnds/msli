@@ -1,4 +1,0 @@
-
-f main(){ #Auto execution of code my msli
-	echo("Hello World");
-}

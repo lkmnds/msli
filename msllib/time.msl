@@ -1,7 +1,0 @@
-intr = .prg_get("Internals")
-
-f time(){
-    ret intr.sys.time()
-}
-
-.purge(intr, "Internals")
