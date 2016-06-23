@@ -13,8 +13,7 @@ def msl_eval(ast, env):
     return ast
 
 def msl_print(exp):
-    print(exp)
-    return printer.pr_str(exp)
+    return printer.pr_str(exp, True)
 
 def msl_rep(string):
     return msl_print(msl_eval(msl_read(string), {}))

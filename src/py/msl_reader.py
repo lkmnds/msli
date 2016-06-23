@@ -48,6 +48,9 @@ def read_seq(reader, start='(', end=')'):
 def read_list(reader):
     return read_seq(reader)
 
+def _unescape(s):
+    return s.replace('\\"', '"').replace('\\n', '\n').replace('\\\\', '\\')
+
 def read_atom(reader):
     int_re = re.compile(r"-?[0-9]+$")
     float_re = re.compile(r"-?[0-9][0-9.]*$")
@@ -57,6 +60,17 @@ def read_atom(reader):
         return mtypes.MslNumber(token)
     elif re.match(float_re, token):
         return mtypes.MslNumber(token)
+    elif token[0] == '"':
+        if token[-1] == '"':
+            return mtypes.MslStr(_unescape(token[1:-1]))
+        else:
+            raise Exception("Expected '\"', got EOF")
+    elif token == 'nil':
+        return mtypes.MslNil()
+    elif token == 'true':
+        return mtypes.MslBool(True)
+    elif token == 'false':
+        return mtypes.MslBool(False)
     else:
         return mtypes.MslSymbol(token)
 
