@@ -30,18 +30,23 @@ def read_form(reader):
 
     return val
 
-def read_list(reader):
+def read_seq(reader, start='(', end=')'):
     ast = mtypes.MslList([])
     token = reader.next()
-    if token != '(': raise Exception("Unexpected %s" % token)
+    if token != start: raise Exception("Unexpected %s" % token)
 
     token = reader.peek()
 
-    while token != ')':
+    while token != end:
+        if not token:
+            raise Exception("Expected '%s', got EOF" % end)
         ast.values.append(read_form(reader))
         token = reader.peek()
 
     return ast
+
+def read_list(reader):
+    return read_seq(reader)
 
 def read_atom(reader):
     int_re = re.compile(r"-?[0-9]+$")
