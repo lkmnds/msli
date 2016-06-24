@@ -7,6 +7,7 @@ import msl_reader as reader
 import msl_printer as printer
 
 import msl_types as mtypes
+import msl_env as menv
 
 enviroment = {
     '+': lambda a,b: a+b,
@@ -21,16 +22,14 @@ def msl_read(string):
 def eval_ast(ast, env):
     if ast.type == 'symbol':
         if ast.symval in env:
-            return env[ast.symval]
+            return env.get(ast.symval)
         else:
             raise Exception("Symbol %s not found" % ast.symval)
     elif ast.type == 'list':
-        print('values', ast.values)
         res = []
         for e in ast.values:
             evaled = msl_eval(e, env)
             res.append(evaled)
-        print('eval\'', repr(evaled))
         return mtypes.MslList(res)
     elif ast.type == 'vec':
         res = []
@@ -54,6 +53,9 @@ def msl_eval(ast, env):
             else:
                 d = eval_ast(ast, env)
                 func = d.values[0]
+                if func == 'def!':
+                    res = mel_eval(d.values[2], env)
+                    env.set(d.values[1], res)
                 fargs = d.values[1:]
                 print('fargs', repr(fargs))
                 return func(*fargs)
@@ -68,6 +70,12 @@ def msl_print(exp):
 
 def msl_rep(string):
     return msl_print(msl_eval(msl_read(string), enviroment))
+
+repl_env = menv.Enviroment()
+repl_env.set("+", lambda x,y: x+y)
+repl_env.set("-", lambda x,y: x-y)
+repl_env.set("*", lambda x,y: x*y)
+repl_env.set("/", lambda x,y: x/y)
 
 def main():
     # repl loop
