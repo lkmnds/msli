@@ -56,6 +56,12 @@ def msl_eval(ast, env):
                         let_env.set(a1.values[i].symval, msl_eval(a1.values[i+1], let_env))
                     return msl_eval(a2, let_env)
 
+                elif funcname.symval == 'exit' or funcname.symval == 'quit':
+                    a1 = ast.values[1]
+                    if not isinstance(a1, mtypes.MslNumber):
+                        raise Exception("A number is required")
+                    sys.exit(a1.num)
+
                 else:
                     d = eval_ast(ast, env)
                     fargs = d.values[1:]
