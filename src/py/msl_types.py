@@ -48,7 +48,7 @@ class MslNumber(MslObject):
         return MslNumber(self.num / other.num)
 
     def __repr__(self):
-        return repr(self.num)
+        return "Number(%s)" % repr(self.num)
 
 class MslStr(MslObject, str):
     def __new__(cls, *args, **kw):
@@ -60,11 +60,17 @@ class MslStr(MslObject, str):
 class MslNil(MslObject):
     def __init__(self):
         MslObject.__init__(self, 'nil')
+        self.value = None
+
+    def __repr__(self):
+        return "Nil(%s)" % self.value
 
 class MslBool(MslObject):
     def __init__(self, val=False):
         MslObject.__init__(self, 'bool')
         self.value = val
+    def __repr__(self):
+        return "Bool(%s)" % self.value
 
 class MslKeyword(MslObject):
     def __init__(self, val):
@@ -91,6 +97,9 @@ class MslVector(MslObject):
     def __len__(self):
         return len(self.values)
 
+    def __repr__(self):
+        return "Vector(%s)" % self.values
+
 class MslHashmap(MslObject):
     def __init__(self, val=[]):
         MslObject.__init__(self, 'hashmap')
@@ -98,5 +107,9 @@ class MslHashmap(MslObject):
         for i in range(0, len(val), 2):
             self.hm[val[i]] = val[i+1]
         self.values = self.hm
+
     def append(self, value):
         print(value)
+
+    def __repr__(self):
+        return "Hashmap(%s)" % self.hm
