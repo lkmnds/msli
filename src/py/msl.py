@@ -78,7 +78,7 @@ def msl_eval(ast, env):
 
                 elif funcname == 'if':
                     a1 = ast.values[1]
-                    ret = eval_ast(a1, env)
+                    ret = msl_eval(a1, env)
 
                     true_condition = ast.values[2]
                     false_condition = None
@@ -154,8 +154,8 @@ def main():
             line = input("msl> ")
             readline.add_history(line)
 
-            #with open(hist_file, 'a') as hf:
-            #    hf.write(line + '\n')
+            with open(hist_file, 'a') as hf:
+                hf.write(line + '\n')
             if line == None: break
             if line == "": continue
 

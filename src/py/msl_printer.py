@@ -8,10 +8,10 @@ def pr_str(v, print_readably=False):
     if not hasattr(v, 'type'):
         if v != None:
             msl_type = mtypes.py_to_msl(v)
-            if msl_type:
+            if msl_type != None:
                 v = msl_type
             else:
-                raise Exception("pr_str: Error getting a valid type to print(got %s)" % type(v))
+                raise Exception("pr_str: Invalid type to print(got %s)" % type(v))
         else:
             return
 

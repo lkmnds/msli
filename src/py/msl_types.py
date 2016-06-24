@@ -55,6 +55,18 @@ class MslNumber(MslObject):
     def __eq__(self, other):
         return self.num == other.num
 
+    def __lt__(self, other):
+        return self.num < other.num
+
+    def __le__(self, other):
+        return self.num <= other.num
+
+    def __gt__(self, other):
+        return self.num > other.num
+
+    def __ge__(self, other):
+        return self.num >= other.num
+
     def __repr__(self):
         return "Number(%s)" % repr(self.num)
 
@@ -77,6 +89,10 @@ class MslBool(MslObject):
     def __init__(self, val=False):
         MslObject.__init__(self, 'bool')
         self.value = val
+
+    def __bool__(self):
+        return self.value
+
     def __repr__(self):
         return "Bool(%s)" % self.value
 
@@ -155,3 +171,5 @@ def py_to_msl(obj):
             feeder.append(k)
             feeder.append(obj[k])
         return MslHashmap(feeder)
+    else:
+        return None
