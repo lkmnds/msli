@@ -7,15 +7,19 @@ class Enviroment:
         self.outer = outer or None
 
     def set(self, k, v):
+        if isinstance(k, mtypes.MslSymbol):
+            print("warning: setting symbol %s as key" % symbol.symval)
+            k = k.symval
         self.data[k] = v
-        print("set %s to %s" % (k,v))
         return v
 
     def find(self, symbol):
         if isinstance(symbol, mtypes.MslSymbol):
-            print("warning: finding a symbol")
+            print("warning: finding a symbol %s" % symbol.symval)
             symbol = symbol.symval
-        print("env: find %s (%s)" % (symbol, type(symbol)))
+
+        # print("env: find %s (%s)" % (symbol, type(symbol)))
+
         if symbol in self.data:
             return self
         elif self.outer:
@@ -26,7 +30,7 @@ class Enviroment:
 
     def get(self, symbol):
         if isinstance(symbol, mtypes.MslSymbol):
-            print("warning: getting a symbol")
+            print("warning: getting a symbol %s" % symbol.symval)
             symbol = symbol.symval
 
         env = self.find(symbol)

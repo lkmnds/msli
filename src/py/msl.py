@@ -36,7 +36,6 @@ def eval_ast(ast, env):
         return ast
 
 def msl_eval(ast, env):
-    print("msl_eval", ast, env.data)
     if hasattr(ast, 'type'):
         if ast.type == 'list':
             if len(ast) == 0:
@@ -53,9 +52,8 @@ def msl_eval(ast, env):
                     d = eval_ast(ast, env)
                     fargs = d.values[1:]
                     envfunc = env.find(funcname.symval)
-                    return envfunc.get(funcname)(*fargs)
+                    return envfunc.get(funcname.symval)(*fargs)
         else:
-            print("evaluating a %s" % ast.type)
             return eval_ast(ast, env)
     else:
         return eval_ast(ast, env)
