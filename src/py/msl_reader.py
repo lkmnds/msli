@@ -54,7 +54,7 @@ def read_form(reader):
         ])
 
     elif tok == ')':
-        raise Exception("Unexpected ')'")
+        raise Exception("Unexpected ')' reading form")
     elif tok == '(':
         val = read_list(reader)
 
@@ -69,6 +69,7 @@ def read_form(reader):
         val = read_hashmap(reader)
 
     else:
+        print("get atom %s" % reader.peek())
         val = read_atom(reader)
 
     return val
@@ -76,14 +77,24 @@ def read_form(reader):
 def read_seq(reader, start='(', end=')', init=mtypes.MslList):
     ast = init([])
     token = reader.next()
-    if token != start: raise Exception("Unexpected %s" % token)
+    if token != start: raise Exception("Unexpected %s reading sequence" % token)
 
     token = reader.peek()
 
-    while token != end:
+    count = 1
+    while count != 0:
+        print("token", token, count)
         if not token:
             raise Exception("Expected '%s', got EOF" % end)
-        ast.append(read_form(reader))
+        if token == start:
+            count += 1
+            token_form = read_form(reader)
+            ast.append(token_form)
+        elif token == end:
+            count -= 1
+        else:
+            token_form = read_form(reader)
+            ast.append(token_form)
         token = reader.peek()
 
     return ast
