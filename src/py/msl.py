@@ -151,7 +151,7 @@ def main():
     initmsl = "%s/msllib/init.msl" % '/'.join(path[:-1])
     with open(initmsl, 'r') as fh:
         for line in fh.readlines():
-            print(msl_rep(line))
+            msl_rep(line)
 
     if len(argv) < 2:
         # start REPL
