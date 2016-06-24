@@ -37,7 +37,7 @@ class MslList(MslObject):
 
     def __eq__(self, other):
         # compare element by element
-        if isinstance(other, MslList):
+        if isinstance(other, MslList) or isinstance(other, MslVector):
             if len(self.values) == len(other.values):
                 for i in range(0, len(self.values)):
                     if self.values[i] != other.values[i]:
@@ -193,7 +193,7 @@ class MslVector(MslObject):
     # comparison functions
     def __eq__(self, other):
         # compare element by element
-        if isinstance(other, MslList):
+        if isinstance(other, MslList) or isinstance(other, MslVector):
             if len(self.values) == len(other.values):
                 for i in range(0, len(self.values)):
                     if self.values[i] != other.values[i]:
