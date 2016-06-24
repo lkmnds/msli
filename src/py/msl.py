@@ -43,8 +43,9 @@ def msl_eval(ast, env):
             else:
                 funcname = ast.values[0]
 
-                if isinstance(ast, mtypes.MslSymbol):
-                    funcname = funcname.symval
+                if hasattr(funcname, 'type'):
+                    if funcname.type == 'symbol':
+                        funcname = funcname.symval
 
                 print('fname', repr(funcname))
 

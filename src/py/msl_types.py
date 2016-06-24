@@ -117,7 +117,7 @@ class MslHashmap(MslObject):
 class MslFunction(MslObject):
     def __init__(self, evalfunc, envclass, ast, env, params):
         MslObject.__init__(self, 'function')
-        print()
+        print('new function with ast %s' % ast)
         def fn(*args):
             return evalfunc(ast, envclass(env, params, MslList(args)))
         fn.__meta__ = None
