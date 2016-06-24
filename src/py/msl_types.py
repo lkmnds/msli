@@ -113,3 +113,15 @@ class MslHashmap(MslObject):
 
     def __repr__(self):
         return "Hashmap(%s)" % self.hm
+
+class MslFunction(MslObject):
+    def __init__(self, fname, f):
+        MslObject.__init__(self, 'function')
+        self.value = f
+        self.func_name = fname
+
+    def __call__(self, args):
+        self.value(*args)
+
+    def __repr__(self):
+        return "Function(%s)" % self.func_name

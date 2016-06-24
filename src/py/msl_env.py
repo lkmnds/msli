@@ -2,9 +2,13 @@
 import msl_types as mtypes
 
 class Enviroment:
-    def __init__(self, outer={}):
+    def __init__(self, outer={}, binds=[], exprs=[]):
         self.data = {}
         self.outer = outer or None
+
+        if binds:
+            for b in binds:
+                self.data[binds[i]] = exprs[i]
 
     def set(self, k, v):
         if isinstance(k, mtypes.MslSymbol):

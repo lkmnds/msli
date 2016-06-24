@@ -62,6 +62,16 @@ def msl_eval(ast, env):
                         raise Exception("A number is required")
                     sys.exit(a1.num)
 
+                elif funcname.symval == 'do':
+                    vals = mtypes.MslList(ast.values[1:])
+                    return eval_ast(vals, env).values[-1]
+
+                elif funcname.symval == 'if':
+                    pass
+
+                elif funcname.symval == 'fn*':
+                    pass
+
                 else:
                     d = eval_ast(ast, env)
                     fargs = d.values[1:]
