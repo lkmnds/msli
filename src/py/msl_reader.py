@@ -81,20 +81,12 @@ def read_seq(reader, start='(', end=')', init=mtypes.MslList):
 
     token = reader.peek()
 
-    count = 1
-    while count != 0:
-        print("token", token, count)
+    while token != end:
         if not token:
             raise Exception("Expected '%s', got EOF" % end)
-        if token == start:
-            count += 1
-            token_form = read_form(reader)
-            ast.append(token_form)
-        elif token == end:
-            count -= 1
-        else:
-            token_form = read_form(reader)
-            ast.append(token_form)
+        token_form = read_form(reader)
+        ast.append(token_form)
+        print("append token", token_form)
         token = reader.peek()
 
     return ast
