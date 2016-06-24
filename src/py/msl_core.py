@@ -27,6 +27,11 @@ def general_op(x, y, op):
 
     return op(x, y)
 
+def cmp_type(x, t):
+    if not hasattr(x, 'type'):
+        x = mtypes.py_to_msl(x)
+    return isinstance(x, t)
+
 ns = {
     '+': lambda x,y: general_op(x, y, operator.add),
     '-': lambda x,y: general_op(x, y, operator.sub),
@@ -35,7 +40,7 @@ ns = {
 
     'prn': prn,
     'list': make_list,
-    'list?': lambda x: isinstance(x, mtypes.MslList),
+    'list?': lambda x: cmp_type(x, mtypes.MslList),
     'empty?': lambda x: len(treat(x)) == 0,
     'count': lambda x: len(treat(x)),
 
