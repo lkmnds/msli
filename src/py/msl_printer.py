@@ -43,5 +43,7 @@ def pr_str(v, print_readably=False):
             res.append(pr_str(v.hm[k], print_readably))
         res = ' '.join(res)
         return "{%s}" % res
+    elif v.type == 'function':
+        return repr(v)
     else:
         raise Exception("No type found: %s" % v.type)

@@ -115,13 +115,20 @@ class MslHashmap(MslObject):
         return "Hashmap(%s)" % self.hm
 
 class MslFunction(MslObject):
-    def __init__(self, fname, f):
+    def __init__(self, evalfunc, envclass, ast, env, params):
         MslObject.__init__(self, 'function')
-        self.value = f
-        self.func_name = fname
+        print()
+        def fn(*args):
+            return evalfunc(ast, envclass(env, params, MslList(args)))
+        fn.__meta__ = None
+        fn.__ast__ = ast
+        fn.__gen_env__ = lambda args: envclass(env, params, args)
+
+        self.value = fn
+        self.args = params
 
     def __call__(self, args):
         self.value(*args)
 
     def __repr__(self):
-        return "Function(%s)" % self.func_name
+        return "Function(%s)" % repr(self.args)

@@ -43,12 +43,17 @@ def msl_eval(ast, env):
             else:
                 funcname = ast.values[0]
 
-                if funcname.symval == 'def!':
+                if isinstance(ast, mtypes.MslSymbol):
+                    funcname = funcname.symval
+
+                print('fname', repr(funcname))
+
+                if funcname == 'def!':
                     a1, a2 = ast.values[1], ast.values[2]
                     res = msl_eval(a2, env)
                     return env.set(a1.symval, res)
 
-                elif funcname.symval == "let*":
+                elif funcname == "let*":
                     a1, a2 = ast.values[1], ast.values[2]
                     let_env = menv.Enviroment(env)
 
@@ -56,21 +61,36 @@ def msl_eval(ast, env):
                         let_env.set(a1.values[i].symval, msl_eval(a1.values[i+1], let_env))
                     return msl_eval(a2, let_env)
 
-                elif funcname.symval == 'exit' or funcname.symval == 'quit':
+                elif funcname == 'exit' or funcname == 'quit':
                     a1 = ast.values[1]
                     if not isinstance(a1, mtypes.MslNumber):
                         raise Exception("A number is required")
                     sys.exit(a1.num)
 
-                elif funcname.symval == 'do':
+                elif funcname == 'do':
                     vals = mtypes.MslList(ast.values[1:])
                     return eval_ast(vals, env).values[-1]
 
-                elif funcname.symval == 'if':
-                    pass
+                elif funcname == 'if':
+                    a1 = ast.values[1]
+                    ret = eval_ast(a1, env)
 
-                elif funcname.symval == 'fn*':
-                    pass
+                    true_condition = ast.values[2]
+                    false_condition = None
+                    if len(ast.values) > 3:
+                        false_condition = ast.values[3]
+
+                    if ret:
+                        return msl_eval(true_condition, env)
+                    else:
+                        if false_condition:
+                            return msl_eval(false_condition, env)
+                        else:
+                            return None
+
+                elif funcname == 'fn*':
+                    a1, a2 = ast.values[1], ast.values[2]
+                    return mtypes.MslFunction(msl_eval, menv.Enviroment, a2, env, a1)
 
                 else:
                     d = eval_ast(ast, env)
