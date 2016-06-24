@@ -1,11 +1,17 @@
 
+import msl_types as mtypes
+
 def _escape(s):
     return s.replace('\\', '\\\\').replace('"', '\\"').replace('\n', '\\n')
 
 def pr_str(v, print_readably=False):
     if not hasattr(v, 'type'):
         if v != None:
-            raise Exception("pr_str: Error getting a valid type to print(got %s)" % type(v))
+            msl_type = mtypes.py_to_msl(v)
+            if msl_type:
+                v = msl_type
+            else:
+                raise Exception("pr_str: Error getting a valid type to print(got %s)" % type(v))
         else:
             return
 

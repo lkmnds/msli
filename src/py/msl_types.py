@@ -14,6 +14,9 @@ class MslList(MslObject):
     def append(self, v):
         self.values.append(v)
 
+    def __getitem__(self, i):
+        return self.values[i]
+
     def __len__(self):
         return len(self.values)
 
@@ -32,6 +35,7 @@ class MslNumber(MslObject):
         MslObject.__init__(self, 'num')
         self.num = int(num)
 
+    # operator functions
     def __add__(self, other):
         return MslNumber(self.num + other.num)
 
@@ -46,6 +50,10 @@ class MslNumber(MslObject):
 
     def __truediv__(self, other):
         return MslNumber(self.num / other.num)
+
+    # comparison functions
+    def __eq__(self, other):
+        return self.num == other.num
 
     def __repr__(self):
         return "Number(%s)" % repr(self.num)
@@ -131,3 +139,19 @@ class MslFunction(MslObject):
 
     def __repr__(self):
         return "Function(%s)" % repr(self.args)
+
+def py_to_msl(obj):
+    if isinstance(obj, bool):
+        return MslBool(obj)
+    elif isinstance(obj, int) or isinstance(obj, long) or isinstance(obj, float):
+        return MslNumber(obj)
+    elif isinstance(obj, str):
+        return MslStr(obj)
+    elif isinstance(obj, list):
+        return MslList(obj)
+    elif isinstance(obj, dict):
+        feeder = []
+        for k in obj:
+            feeder.append(k)
+            feeder.append(obj[k])
+        return MslHashmap(feeder)

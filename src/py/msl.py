@@ -9,6 +9,8 @@ import msl_printer as printer
 
 import msl_types as mtypes
 import msl_env as menv
+import msl_core as mcore
+import msl_error as merror
 
 hist_loaded = False
 hist_file = os.path.expanduser("~/.msl-history")
@@ -50,8 +52,6 @@ def msl_eval(ast, env):
                 if hasattr(funcname, 'type'):
                     if funcname.type == 'symbol':
                         funcname = funcname.symval
-
-                print('fname', repr(funcname))
 
                 if funcname == 'def!':
                     a1, a2 = ast.values[1], ast.values[2]
@@ -132,10 +132,8 @@ def msl_print(exp):
     return printer.pr_str(exp, True)
 
 repl_env = menv.Enviroment()
-repl_env.set("+", lambda x,y: x+y)
-repl_env.set("-", lambda x,y: x-y)
-repl_env.set("*", lambda x,y: x*y)
-repl_env.set("/", lambda x,y: x/y)
+for key in mcore.ns:
+    repl_env.set(key, mcore.ns[key])
 
 def msl_rep(string):
     return msl_print(msl_eval(msl_read(string), repl_env))

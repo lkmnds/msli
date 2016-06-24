@@ -9,7 +9,7 @@ class Enviroment:
 
         if binds:
             for i in range(0, len(binds)):
-                self.data[binds[i].symval] = exprs.values[i]
+                self.data[binds[i].symval] = exprs[i]
 
     def set(self, k, v):
         if isinstance(k, mtypes.MslSymbol):
