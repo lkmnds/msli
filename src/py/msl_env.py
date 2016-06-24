@@ -9,9 +9,7 @@ class Enviroment:
 
         if binds:
             for i in range(0, len(binds)):
-                print('binds', binds[i])
                 if binds[i].symval == '&':
-                    print('b', binds[i+1].symval, exprs[i:])
                     self.data[binds[i+1].symval] = exprs[i:]
                     break
                 else:

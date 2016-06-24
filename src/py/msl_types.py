@@ -1,3 +1,4 @@
+import msl_error as merror
 
 class MslObject:
     def __init__(self, valtype):
@@ -9,11 +10,17 @@ class MslObject:
 class MslList(MslObject):
     def __init__(self, lst):
         MslObject.__init__(self, 'list')
-        self.values = lst
-        self.hash = hash(tuple(self.values))
+        if isinstance(lst, list):
+            self.values = lst
+            self.hash = tuple(self.values)
+        elif isinstance(lst, tuple):
+            self.values = list(lst)
+            self.hash = lst
+        else:
+            merror.error("Error creating MslList with %s" % type(lst))
 
     def _update(self):
-        self.hash = hash(tuple(self.values))
+        self.hash = tuple(self.values)
 
     def append(self, v):
         self.values.append(v)
@@ -208,7 +215,7 @@ def py_to_msl(obj):
         return MslNumber(obj)
     elif isinstance(obj, str):
         return MslStr(obj)
-    elif isinstance(obj, list):
+    elif isinstance(obj, list) or isinstance(obj, list):
         return MslList(obj)
     elif isinstance(obj, dict):
         feeder = []
@@ -217,4 +224,5 @@ def py_to_msl(obj):
             feeder.append(obj[k])
         return MslHashmap(feeder)
     else:
+        merror.error("pytomsl: no instance found of %s" % type(obj))
         return None
