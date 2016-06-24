@@ -101,7 +101,27 @@ def msl_eval(ast, env):
                     d = eval_ast(ast, env)
                     fargs = d.values[1:]
                     envfunc = env.find(funcname)
-                    return envfunc.get(funcname)(*fargs)
+                    func_call = None
+                    func_type = ''
+
+                    if hasattr(funcname, 'type'):
+                        if funcname.type == 'function':
+                            # function call(maybe?)
+                            func_call = funcname
+                        elif funcname.type == 'list':
+                            # got lambda
+                            func_call = msl_eval(funcname, env)
+                            func_type = 'decl'
+                        else:
+                            # just as usual, get from the env
+                            func_call = envfunc.get(funcname)
+                    else:
+                        func_call = envfunc.get(funcname)
+
+                    if func_call == None:
+                        raise Exception("No function %s found" % funcname)
+
+                    return func_call(*fargs)
         else:
             return eval_ast(ast, env)
     else:
@@ -136,8 +156,8 @@ def main():
             line = input("msl> ")
             readline.add_history(line)
 
-            with open(hist_file, 'a') as hf:
-                hf.write(line + '\n')
+            #with open(hist_file, 'a') as hf:
+            #    hf.write(line + '\n')
             if line == None: break
             if line == "": continue
 

@@ -1,5 +1,6 @@
 
 import msl_types as mtypes
+import msl_error as merror
 
 class Enviroment:
     def __init__(self, outer={}, binds=[], exprs=[]):
@@ -7,8 +8,8 @@ class Enviroment:
         self.outer = outer or None
 
         if binds:
-            for b in binds:
-                self.data[binds[i]] = exprs[i]
+            for i in range(0, len(binds)):
+                self.data[binds[i].symval] = exprs.values[i]
 
     def set(self, k, v):
         if isinstance(k, mtypes.MslSymbol):
@@ -29,7 +30,7 @@ class Enviroment:
         elif self.outer:
             return self.outer.find(symbol)
         else:
-            print("env.debug: no env found for %s" % symbol)
+            merror.debug("env.debug: no env found for %s" % symbol)
             return None
 
     def get(self, symbol):

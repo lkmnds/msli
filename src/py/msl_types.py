@@ -88,7 +88,7 @@ class MslVector(MslObject):
     def __getitem__(self, i):
         if type(i) == slice: return MslVector(self.values.__getitem__(self, i))
         elif i >= len(self): return None
-        else:                return self.value.__getitem__(self, i)
+        else:                return self.values.__getitem__(i)
     def __getslice__(self, *a): return MslVector(self.values.__getslice__(self, *a))
 
     def append(self, v):
@@ -117,18 +117,17 @@ class MslHashmap(MslObject):
 class MslFunction(MslObject):
     def __init__(self, evalfunc, envclass, ast, env, params):
         MslObject.__init__(self, 'function')
-        print('new function with ast %s' % ast)
         def fn(*args):
             return evalfunc(ast, envclass(env, params, MslList(args)))
         fn.__meta__ = None
         fn.__ast__ = ast
         fn.__gen_env__ = lambda args: envclass(env, params, args)
 
-        self.value = fn
+        self.func = fn
         self.args = params
 
-    def __call__(self, args):
-        self.value(*args)
+    def __call__(self, *args):
+        return self.func(*args)
 
     def __repr__(self):
         return "Function(%s)" % repr(self.args)
