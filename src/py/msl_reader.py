@@ -111,7 +111,7 @@ def read_hashmap(reader):
     return mtypes.MslHashmap(lst)
 
 def read_list(reader):
-    return read_seq(reader)
+    return read_seq(reader, '(', ')')
 
 def _unescape(s):
     return s.replace('\\"', '"').replace('\\n', '\n').replace('\\\\', '\\')
