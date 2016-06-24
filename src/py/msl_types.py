@@ -1,5 +1,8 @@
 import msl_error as merror
 
+MSL_VERSION = '0.0.0'
+MSL_BUILD = 1
+
 class MslObject:
     def __init__(self, valtype):
         self.type = valtype

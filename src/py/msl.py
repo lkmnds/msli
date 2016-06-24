@@ -145,6 +145,8 @@ def main():
     # repl loop
     global hist_loaded
 
+    print("msl v%s b%d" % (mtypes.MSL_VERSION, mtypes.MSL_BUILD))
+
     path = (os.path.realpath(__file__)).split('/')
     initmsl = "%s/msllib/init.msl" % '/'.join(path[:-1])
     with open(initmsl, 'r') as fh:
