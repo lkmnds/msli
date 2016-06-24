@@ -1,5 +1,6 @@
 import msl_types as mtypes
 import re
+import copy
 
 class Reader:
     def __init__(self, tok):
@@ -69,7 +70,6 @@ def read_form(reader):
         val = read_hashmap(reader)
 
     else:
-        print("get atom %s" % reader.peek())
         val = read_atom(reader)
 
     return val
@@ -77,17 +77,32 @@ def read_form(reader):
 def read_seq(reader, start='(', end=')', init=mtypes.MslList):
     ast = init([])
     token = reader.next()
-    if token != start: raise Exception("Unexpected %s reading sequence" % token)
+    if token != start: raise Exception("Expected %s, got %s" % (start, token))
 
     token = reader.peek()
+    count = 1
 
-    while token != end:
+    while count > 0:
         if not token:
             raise Exception("Expected '%s', got EOF" % end)
-        token_form = read_form(reader)
-        ast.append(token_form)
-        print("append token", token_form)
+        print("got token", token)
+        if token == start:
+            count += 1
+            token_form = read_form(reader)
+            ast.append(token_form)
+        elif token == end:
+            count -= 1
+        else:
+            token_form = read_form(reader)
+            ast.append(token_form)
         token = reader.peek()
+
+    if count != 0:
+        raise Exception("Mismatch in parenthesis")
+
+    reader.next()
+
+    print("final ast", ast)
 
     return ast
 
