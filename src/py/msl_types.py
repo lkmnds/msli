@@ -3,6 +3,9 @@ class MslObject:
     def __init__(self, valtype):
         self.type = valtype
 
+    def __repr__(self):
+        return repr(self.value)
+
 class MslList(MslObject):
     def __init__(self, lst):
         MslObject.__init__(self, 'list')
@@ -14,10 +17,15 @@ class MslList(MslObject):
     def __len__(self):
         return len(self.values)
 
+    def __repr__(self):
+        return repr(self.values)
+
 class MslSymbol(MslObject):
     def __init__(self, val=None):
         MslObject.__init__(self, 'symbol')
         self.symval = val
+    def __repr__(self):
+        return repr(self.symval)
 
 class MslNumber(MslObject):
     def __init__(self, num=None):
@@ -38,6 +46,9 @@ class MslNumber(MslObject):
 
     def __truediv__(self, other):
         return MslNumber(self.num / other.num)
+
+    def __repr__(self):
+        return repr(self.num)
 
 class MslStr(MslObject, str):
     def __new__(cls, *args, **kw):
