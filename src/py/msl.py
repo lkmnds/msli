@@ -48,11 +48,12 @@ def msl_eval(ast, env):
                     res = msl_eval(a2, env)
                     return env.set(a1.symval, res)
 
-                elif "let*" == a0:
-                    a1, a2 = ast[1], ast[2]
-                    let_env = menv.Enviromtn(env)
+                elif funcname.symval == "let*":
+                    a1, a2 = ast.values[1], ast.values[2]
+                    let_env = menv.Enviroment(env)
+
                     for i in range(0, len(a1), 2):
-                        let_env.set(a1[i], msl_eval(a1[i+1], let_env))
+                        let_env.set(a1.values[i].symval, msl_eval(a1.values[i+1], let_env))
                     return msl_eval(a2, let_env)
 
                 else:

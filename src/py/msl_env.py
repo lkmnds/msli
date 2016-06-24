@@ -8,7 +8,7 @@ class Enviroment:
 
     def set(self, k, v):
         if isinstance(k, mtypes.MslSymbol):
-            print("warning: setting symbol %s as key" % symbol.symval)
+            print("warning: setting symbol %s as key" % k.symval)
             k = k.symval
         self.data[k] = v
         return v
