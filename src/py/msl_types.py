@@ -192,15 +192,17 @@ class MslVector(MslObject):
 
     # comparison functions
     def __eq__(self, other):
-        if isinstance(other, MslNumber):
-            return self.num == other.num
-        elif isinstance(other, MslNil) or other == None:
-            return False
-        else:
-            try:
-                return self.num == MslNumber(other).num
-            except:
+        # compare element by element
+        if isinstance(other, MslList):
+            if len(self.values) == len(other.values):
+                for i in range(0, len(self.values)):
+                    if self.values[i] != other.values[i]:
+                        return False
+                return True
+            else:
                 return False
+        else:
+            return False
 
     def __hash__(self):
         return hash(self.tup)
