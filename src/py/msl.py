@@ -32,6 +32,17 @@ def eval_ast(ast, env):
             res.append(evaled)
         print('eval\'', repr(evaled))
         return mtypes.MslList(res)
+    elif ast.type == 'vec':
+        res = []
+        for e in ast.values:
+            evaled = msl_eval(e, env)
+            res.append(evaled)
+        return mtypes.MslList(res)
+    elif ast.type == 'hashmap':
+        newhm = mtypes.MslHashmap([])
+        for k in ast.hm:
+            newhm.hm[k] = msl_eval(ast.hm[k], env)
+        return newhm
     else:
         return ast
 

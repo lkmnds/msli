@@ -85,7 +85,6 @@ def read_seq(reader, start='(', end=')', init=mtypes.MslList):
     while count > 0:
         if not token:
             raise Exception("Expected '%s', got EOF" % end)
-        print("got token", token)
         if token == start:
             count += 1
             token_form = read_form(reader)
@@ -98,11 +97,9 @@ def read_seq(reader, start='(', end=')', init=mtypes.MslList):
         token = reader.peek()
 
     if count != 0:
-        raise Exception("Mismatch in parenthesis")
+        raise Exception("Mismatch in parentheses")
 
     reader.next()
-
-    print("final ast", ast)
 
     return ast
 
