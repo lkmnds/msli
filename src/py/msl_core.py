@@ -5,6 +5,11 @@ import msl_types as mtypes
 
 import operator
 
+def treat(x):
+    if not hasattr(x, 'type'):
+        x = mtypes.py_to_msl(x)
+    return x
+
 def make_list(*args):
     return mtypes.MslList(args)
 
@@ -31,8 +36,8 @@ ns = {
     'prn': prn,
     'list': make_list,
     'list?': lambda x: isinstance(x, mtypes.MslList),
-    'empty?': lambda x: len(x) == 0,
-    'count': lambda x: len(x),
+    'empty?': lambda x: len(treat(x)) == 0,
+    'count': lambda x: len(treat(x)),
 
     '=':  lambda x,y: general_op(x, y, operator.eq),
     '<':  lambda x,y: general_op(x, y, operator.lt),

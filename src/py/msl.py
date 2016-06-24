@@ -3,6 +3,7 @@ import readline
 import sys
 argv = sys.argv
 import os
+import os.path
 
 import msl_reader as reader
 import msl_printer as printer
@@ -141,27 +142,42 @@ def msl_rep(string):
 def main():
     # repl loop
     global hist_loaded
-    while True:
-        try:
-            if not hist_loaded:
-                hist_loaded = True
-                try:
-                    with open(hist_file, 'r') as hf:
-                        for line in hf.readlines():
-                            readline.add_history(line.rstrip("\r\n"))
-                except IOError:
-                    pass
-            line = input("msl> ")
-            readline.add_history(line)
 
-            with open(hist_file, 'a') as hf:
-                hf.write(line + '\n')
-            if line == None: break
-            if line == "": continue
-
+    path = (os.path.realpath(__file__)).split('/')
+    initmsl = "%s/msllib/init.msl" % '/'.join(path[:-1])
+    with open(initmsl, 'r') as fh:
+        for line in fh.readlines():
             print(msl_rep(line))
-        except Exception as e:
-            print("".join(traceback.format_exception(*sys.exc_info())))
+
+    if len(argv) < 2:
+        # start REPL
+        while True:
+            try:
+                if not hist_loaded:
+                    hist_loaded = True
+                    try:
+                        with open(hist_file, 'r') as hf:
+                            for line in hf.readlines():
+                                readline.add_history(line.rstrip("\r\n"))
+                    except IOError:
+                        pass
+                line = input("msl> ")
+                readline.add_history(line)
+
+                with open(hist_file, 'a') as hf:
+                    hf.write(line + '\n')
+                if line == None: break
+                if line == "": continue
+
+                print(msl_rep(line))
+            except Exception as e:
+                print("".join(traceback.format_exception(*sys.exc_info())))
+    else:
+        filename = argv[1]
+        filename = os.path.realpath(filename)
+        with open(filename, 'r') as fh:
+            for line in fh.readlines():
+                print(msl_rep(line))
 
 if __name__ == '__main__':
     main()

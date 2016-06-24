@@ -10,15 +10,39 @@ class MslList(MslObject):
     def __init__(self, lst):
         MslObject.__init__(self, 'list')
         self.values = lst
+        self.hash = hash(tuple(self.values))
+
+    def _update(self):
+        self.hash = hash(tuple(self.values))
 
     def append(self, v):
         self.values.append(v)
+        self._update()
 
     def __getitem__(self, i):
         return self.values[i]
 
     def __len__(self):
         return len(self.values)
+
+    def __bool__(self):
+        return True
+
+    def __eq__(self, other):
+        # compare element by element
+        if isinstance(other, MslList):
+            if len(self.values) == len(other.values):
+                for i in range(0, len(self.values)):
+                    if self.values[i] != other.values[i]:
+                        return False
+                return True
+            else:
+                return False
+        else:
+            return False
+
+    def __hash__(self):
+        return hash(self.hash)
 
     def __repr__(self):
         return "List(%s)" % repr(self.values)
@@ -53,7 +77,18 @@ class MslNumber(MslObject):
 
     # comparison functions
     def __eq__(self, other):
-        return self.num == other.num
+        if isinstance(other, MslNumber):
+            return self.num == other.num
+        elif isinstance(other, MslNil) or other == None:
+            return False
+        else:
+            try:
+                return self.num == MslNumber(other).num
+            except:
+                return False
+
+    def __hash__(self):
+        return hash(self.num)
 
     def __lt__(self, other):
         return self.num < other.num
@@ -73,14 +108,24 @@ class MslNumber(MslObject):
 class MslStr(MslObject, str):
     def __new__(cls, *args, **kw):
         return str.__new__(cls, *args, **kw)
+
     def __init__(self, string):
         MslObject.__init__(self, 'str')
         self.value = string
+
+    def __bool__(self):
+        return True
 
 class MslNil(MslObject):
     def __init__(self):
         MslObject.__init__(self, 'nil')
         self.value = None
+
+    def __bool__(self):
+        return False
+
+    def __eq__(self, other):
+        return other == None
 
     def __repr__(self):
         return "Nil(%s)" % self.value
@@ -159,7 +204,7 @@ class MslFunction(MslObject):
 def py_to_msl(obj):
     if isinstance(obj, bool):
         return MslBool(obj)
-    elif isinstance(obj, int) or isinstance(obj, long) or isinstance(obj, float):
+    elif isinstance(obj, int) or isinstance(obj, float):
         return MslNumber(obj)
     elif isinstance(obj, str):
         return MslStr(obj)
