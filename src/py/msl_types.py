@@ -156,22 +156,54 @@ class MslKeyword(MslObject):
         else:
             self.value = "\u029e" + val
 
+    def __eq__(self, other):
+        return self.value == other.value
+
 class MslVector(MslObject):
     def __init__(self, val=[]):
         MslObject.__init__(self, 'vec')
         self.values = val
-    def __add__(self, rhs): return MslVector(self.values.__add__(self, rhs))
+        self.tup = tuple(self.values)
+    def __add__(self, rhs):
+        res = MslVector(self.values.__add__(self, rhs))
+        self._update()
+        return res
+
     def __getitem__(self, i):
         if type(i) == slice: return MslVector(self.values.__getitem__(self, i))
         elif i >= len(self): return None
         else:                return self.values.__getitem__(i)
-    def __getslice__(self, *a): return MslVector(self.values.__getslice__(self, *a))
+
+    def __getslice__(self, *a):
+        return MslVector(self.values.__getslice__(self, *a))
+
+    def _update(self):
+        self.tup = tuple(self.values)
 
     def append(self, v):
         self.values.append(v)
+        self._update()
 
     def __len__(self):
         return len(self.values)
+
+    def __bool__(self):
+        return True
+
+    # comparison functions
+    def __eq__(self, other):
+        if isinstance(other, MslNumber):
+            return self.num == other.num
+        elif isinstance(other, MslNil) or other == None:
+            return False
+        else:
+            try:
+                return self.num == MslNumber(other).num
+            except:
+                return False
+
+    def __hash__(self):
+        return hash(self.tup)
 
     def __repr__(self):
         return "Vector(%s)" % self.values

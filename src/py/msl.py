@@ -86,6 +86,8 @@ def msl_eval(ast, env):
                     if len(ast.values) > 3:
                         false_condition = ast.values[3]
 
+                    print(bool(ret))
+
                     if ret:
                         return msl_eval(true_condition, env)
                     else:
