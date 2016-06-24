@@ -9,22 +9,12 @@ import msl_printer as printer
 import msl_types as mtypes
 import msl_env as menv
 
-enviroment = {
-    '+': lambda a,b: a+b,
-    '-': lambda a,b: a-b,
-    '*': lambda a,b: a*b,
-    '/': lambda a,b: a/b,
-}
-
 def msl_read(string):
     return reader.read_str(string)
 
 def eval_ast(ast, env):
     if ast.type == 'symbol':
-        if ast.symval in env:
-            return env.get(ast.symval)
-        else:
-            raise Exception("Symbol %s not found" % ast.symval)
+        return env.get(ast.symval)
     elif ast.type == 'list':
         res = []
         for e in ast.values:
@@ -46,20 +36,26 @@ def eval_ast(ast, env):
         return ast
 
 def msl_eval(ast, env):
+    print("msl_eval", ast, env.data)
     if hasattr(ast, 'type'):
         if ast.type == 'list':
             if len(ast) == 0:
                 return ast
             else:
-                d = eval_ast(ast, env)
-                func = d.values[0]
-                if func == 'def!':
-                    res = mel_eval(d.values[2], env)
-                    env.set(d.values[1], res)
-                fargs = d.values[1:]
-                print('fargs', repr(fargs))
-                return func(*fargs)
+                funcname = ast.values[0]
+
+                if funcname.symval == 'def!':
+                    a1, a2 = ast.values[1], ast.values[2]
+                    res = msl_eval(a2, env)
+                    return env.set(a1.symval, res)
+
+                else:
+                    d = eval_ast(ast, env)
+                    fargs = d.values[1:]
+                    envfunc = env.find(funcname.symval)
+                    return envfunc.get(funcname)(*fargs)
         else:
+            print("evaluating a %s" % ast.type)
             return eval_ast(ast, env)
     else:
         return eval_ast(ast, env)
@@ -68,14 +64,14 @@ def msl_eval(ast, env):
 def msl_print(exp):
     return printer.pr_str(exp, True)
 
-def msl_rep(string):
-    return msl_print(msl_eval(msl_read(string), enviroment))
-
 repl_env = menv.Enviroment()
 repl_env.set("+", lambda x,y: x+y)
 repl_env.set("-", lambda x,y: x-y)
 repl_env.set("*", lambda x,y: x*y)
 repl_env.set("/", lambda x,y: x/y)
+
+def msl_rep(string):
+    return msl_print(msl_eval(msl_read(string), repl_env))
 
 def main():
     # repl loop

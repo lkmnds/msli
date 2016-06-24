@@ -4,7 +4,7 @@ class MslObject:
         self.type = valtype
 
     def __repr__(self):
-        return repr(self.value)
+        return "Object(%s)" % repr(self.value)
 
 class MslList(MslObject):
     def __init__(self, lst):
@@ -18,14 +18,14 @@ class MslList(MslObject):
         return len(self.values)
 
     def __repr__(self):
-        return repr(self.values)
+        return "List(%s)" % repr(self.values)
 
 class MslSymbol(MslObject):
     def __init__(self, val=None):
         MslObject.__init__(self, 'symbol')
         self.symval = val
     def __repr__(self):
-        return repr(self.symval)
+        return "Symbol(%s)" % repr(self.symval)
 
 class MslNumber(MslObject):
     def __init__(self, num=None):

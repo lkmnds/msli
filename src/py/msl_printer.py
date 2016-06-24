@@ -4,7 +4,10 @@ def _escape(s):
 
 def pr_str(v, print_readably=False):
     if not hasattr(v, 'type'):
-        raise Exception("pr_str: Error getting a valid type to print")
+        if v != None:
+            raise Exception("pr_str: Error getting a valid type to print(got %s)" % type(v))
+        else:
+            return
 
     if v.type == 'symbol':
         return v.symval
