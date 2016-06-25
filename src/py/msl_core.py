@@ -48,7 +48,7 @@ def c_cons(x, y):
     newlist = mtypes.MslList([])
     newlist.append(x)
     if isinstance(y, mtypes.MslList):
-        newlist.extend(el)
+        newlist.values.extend(y.values)
     else:
         newlist.append(y)
     return newlist

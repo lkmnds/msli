@@ -42,16 +42,17 @@ def quasiquote(ast):
         ])
 
     elif isinstance(ast[0], mtypes.MslList) or isinstance(ast[0], list):
-        if len(ast) == 1:
-            if ast[0][0] == mtypes.MslSymbol('unquote'):
-                return ast[0][1]
-        else:
-            if ast[0][0] == mtypes.MslSymbol('unquote'):
-                print('q1:', quasiquote(ast[1:]))
-                return mtypes.MslList([
-                    mtypes.MslSymbol('list'),
-                    ast[0][1],
-                ] + quasiquote(ast[1:]).values) # THIS IS A HACK AAAAAAAAHHHHH
+        if ast[0][0] == mtypes.MslSymbol('unquote'):
+            res = mtypes.MslNil()
+            print('1:', ast[1:])
+            if len(ast[1:]) > 0:
+                res = quasiquote(ast[1:])
+
+            return mtypes.MslList([
+                mtypes.MslSymbol('list'),
+                ast[0][1],
+                res,
+            ])
 
     elif is_pair(ast[0]) and ast[0][0] == mtypes.MslSymbol("splice-unquote"):
         return mtypes.MslList([
@@ -61,10 +62,13 @@ def quasiquote(ast):
         ])
 
     else:
+        res = mtypes.MslNil()
+        if len(ast[1:]) > 0:
+            res = quasiquote(ast[1:])
         return mtypes.MslList([
             mtypes.MslSymbol('cons'),
             quasiquote(ast[0]),
-            quasiquote(ast[1:]),
+            res,
         ])
 
 def msl_read(string):
