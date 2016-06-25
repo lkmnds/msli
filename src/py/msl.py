@@ -5,7 +5,7 @@ argv = sys.argv
 import os
 import os.path
 
-sys.setrecursionlimit(20000)
+# sys.setrecursionlimit(20000)
 
 import msl_reader as reader
 import msl_printer as printer
@@ -28,57 +28,71 @@ def is_pair(x):
         return False
 
 def quasiquote(ast):
-    print('ast', ast)
-    '''if isinstance(ast, mtypes.MslList) or isinstance(ast, list):
-        if len(ast) > 0:
-            print('0', ast[0])
-            print('islist[0]', isinstance(ast[0], mtypes.MslList))
-            print("ispair[ast]", is_pair(ast))'''
-
     if not is_pair(ast):
-        return mtypes.MslList([
-            mtypes.MslSymbol('quote'),
+        return types._list(types._symbol("quote"),
+                           ast)
+    elif ast[0] == 'unquote':
+        return ast[1]
+    elif is_pair(ast[0]) and ast[0][0] == 'splice-unquote':
+        return types._list(types._symbol("concat"),
+                           ast[0][1],
+                           quasiquote(ast[1:]))
+    else:
+        return types._list(types._symbol("cons"),
+                           quasiquote(ast[0]),
+                           quasiquote(ast[1:]))
+
+def quasiquote(ast, qflag=False):
+    if not is_pair(ast):
+        '''return mtypes.MslList([
+            mtypes.MslSymbol("quote"),
             ast
-        ])
-
-    elif isinstance(ast[0], mtypes.MslList) or isinstance(ast[0], list):
-        if ast[0][0] == mtypes.MslSymbol('unquote'):
-            res = False
-            if len(ast[1:]) > 0:
-                res = quasiquote(ast[1:])
-
-            if res:
-                return mtypes.MslPList([
-                    ast[0][1],
-                    res,
+        ])'''
+        if isinstance(ast, mtypes.MslList):
+            if len(ast) > 0:
+                return ast[0]
+            else:
+                return ast
+        else:
+            if isinstance(ast, mtypes.MslSymbol):
+                return mtypes.MslList([
+                    mtypes.MslSymbol("quote"),
+                    ast
                 ])
             else:
-                return mtypes.MslPList([
-                    mtypes.MslSymbol('list'),
-                    ast[0][1],
-                ])
+                return ast
 
-    elif is_pair(ast[0]) and ast[0][0] == mtypes.MslSymbol("splice-unquote"):
-        return mtypes.MslList([
-            mtypes.MslSymbol('concat'),
-            ast[0][1],
-            quasiquote(ast[1:])
-        ])
+    elif ast[0] == mtypes.MslSymbol('unquote'):
+        return ast[1]
+
+    elif is_pair(ast[0]) and ast[0][0] == mtypes.MslSymbol('splice-unquote'):
+        if len(ast[1:]) > 0:
+            lst = [
+                mtypes.MslSymbol("concat"),
+                ast[0][1],
+            ]
+            lst.append(quasiquote(ast[1:]))
+            return mtypes.MslList(lst)
+        else:
+            lst = [
+                ast[0][1],
+            ]
+            return mtypes.MslList(lst)
 
     else:
-        res = False
         if len(ast[1:]) > 0:
-            res = quasiquote(ast[1:])
+            lst = [
+                mtypes.MslSymbol("cons"),
+                quasiquote(ast[0]),
+            ]
+            lst.append(quasiquote(ast[1:], True))
 
-        if res:
-            return mtypes.MslPList([
-                quasiquote(ast[0]),
-                res,
-            ])
+            return mtypes.MslList(lst)
         else:
-            return mtypes.MslPList([
-                quasiquote(ast[0]),
-            ])
+            lst = [
+                quasiquote(ast[0], True),
+            ]
+            return mtypes.MslPList(lst)
 
 def msl_read(string):
     return reader.read_str(string)
@@ -174,7 +188,7 @@ def msl_eval(ast, env):
                         return ast.values[1]
 
                     elif funcname == 'quasiquote':
-                        ast = quasiquote(ast[1])
+                        ast = quasiquote(ast[1], False)
                         continue
 
                     else:

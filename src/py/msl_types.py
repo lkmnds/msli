@@ -224,6 +224,17 @@ class MslPList(MslObject):
         MslObject.__init__(self, 'plist')
         self.values = val
 
+    def __getitem__(self, i):
+        return self.values[i]
+
+    def __repr__(self):
+        return "P_List(%s)" % self.values
+
+class MslCList(MslList):
+    def __init__(self, val=[]):
+        MslList.__init__(self, val)
+        self.type = 'clist'
+
 class MslHashmap(MslObject):
     def __init__(self, val=[]):
         MslObject.__init__(self, 'hashmap')
