@@ -74,6 +74,7 @@ def msl_eval(ast, env):
                             let_env.set(a1.values[i].symval, msl_eval(a1.values[i+1], let_env))
                         env = let_env
                         ast = a2
+                        continue
 
                     elif funcname == 'exit' or funcname == 'quit':
                         a1 = ast.values[1]
@@ -85,6 +86,7 @@ def msl_eval(ast, env):
                         vals = mtypes.MslList(ast.values[1:-1])
                         eval_ast(vals, env)
                         ast = ast[-1]
+                        continue
 
                     elif funcname == 'if':
                         a1, a2 = ast.values[1], ast.values[2]
@@ -113,6 +115,7 @@ def msl_eval(ast, env):
                         if hasattr(f, '__ast__'):
                             ast = f.__ast__
                             env = f.__gen__env(d.values[1:])
+                            continue
                         else:
                             return f(*d.values[1:])
             else:
