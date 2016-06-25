@@ -34,6 +34,9 @@ def c_slurp(fname):
         res = f.read()
     return mtypes.MslStr(res)
 
+def c_swap(atom, f, *args):
+    atom.value = f(*args)
+
 def prn(x):
     print(printer.pr_str(x, True))
     return
@@ -74,6 +77,12 @@ ns = {
 
     'read-string': reader.read_str,
     'slurp': c_slurp,
+
+    'atom', lambda x: mtypes.MslAtom(x),
+    'atom?', lambda x: isinstance(x, mtypes.MslAtom),
+    'deref': lambda atom: atom.value,
+    'reset!': lambda atom, val: atom.value = val,
+    'swap!': c_swap,
 
     # bool comparators
     '=':  lambda x,y: general_op(x, y, operator.eq),

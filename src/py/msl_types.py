@@ -1,7 +1,7 @@
 import msl_error as merror
 
 MSL_VERSION = '0.0.0'
-MSL_BUILD = 1
+MSL_BUILD = 2
 
 class MslObject:
     def __init__(self, valtype):
@@ -244,6 +244,14 @@ class MslFunction(MslObject):
 
     def __repr__(self):
         return "Function(%s)" % repr(self.args)
+
+class MslAtom(MslObject):
+    def __init__(self, v):
+        MslObject.__init__(self, 'atom')
+        self.value = v
+
+    def __repr__(self):
+        return "Atom(%s)" % repr(self.value)
 
 def py_to_msl(obj):
     if isinstance(obj, bool):

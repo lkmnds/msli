@@ -53,6 +53,12 @@ def read_form(reader):
             mtypes.MslSymbol('slice-unquote'),
             read_form(reader)
         ])
+    elif tok == '@':
+        reader.next()
+        return mtypes.MslList([
+            mtypes.MslSymbol('deref'),
+            read_form(reader)
+        ])
 
     elif tok == ')':
         raise Exception("Unexpected ')' reading form")
