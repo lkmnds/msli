@@ -219,6 +219,11 @@ class MslVector(MslObject):
     def __repr__(self):
         return "Vector(%s)" % self.values
 
+class MslPList(MslObject):
+    def __init__(self, val=[]):
+        MslObject.__init__(self, 'plist')
+        self.values = val
+
 class MslHashmap(MslObject):
     def __init__(self, val=[]):
         MslObject.__init__(self, 'hashmap')

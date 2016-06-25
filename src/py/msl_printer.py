@@ -28,7 +28,7 @@ def pr_str(v, print_readably=False):
         return 'nil'
     elif v.type == 'bool':
         return str(v.value)
-    elif v.type == 'list':
+    elif v.type == 'list' or v.type == 'plist':
         res = []
         for el in v.values:
             val = pr_str(el, print_readably)
