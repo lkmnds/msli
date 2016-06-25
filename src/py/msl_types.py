@@ -19,6 +19,8 @@ class MslList(MslObject):
         elif isinstance(lst, tuple):
             self.values = list(lst)
             self.hash = lst
+        elif isinstance(lst, MslPList):
+            self.values = lst.values
         else:
             merror.error("Error creating MslList with %s" % type(lst))
 
@@ -66,6 +68,9 @@ class MslSymbol(MslObject):
         if isinstance(other, MslSymbol):
             return self.symval == other.symval
         return False
+
+    def __hash__(self):
+        return hash(self.symval)
 
     def __repr__(self):
         return "Symbol(%s)" % repr(self.symval)

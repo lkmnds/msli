@@ -200,7 +200,19 @@ def msl_eval(ast, env):
                             env = f.__gen__env(d.values[1:])
                             continue
                         else:
+                            print(f)
                             return f(*d.values[1:])
+            elif isinstance(ast, mtypes.MslPList):
+                possible_fname = ast[0]
+
+                print('pfname', possible_fname)
+
+                if isinstance(possible_fname, mtypes.MslList):
+                    if isinstance(possible_fname[0], mtypes.MslSymbol):
+                        if env.find(possible_fname[0].symval):
+                            print("got func %s in plist" % possible_fname[0].symval)
+                            ast = mtypes.MslList(ast.values)
+                            continue
             else:
                 return eval_ast(ast, env)
         else:
