@@ -132,6 +132,7 @@ for key in mcore.ns:
     repl_env.set(key, mcore.ns[key])
 
 repl_env.set('eval', lambda ast: msl_eval(ast, repl_env))
+repl_env.set('*ARGV*', sys.argv[2:])
 
 def msl_rep(string):
     try:

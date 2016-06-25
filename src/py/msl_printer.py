@@ -51,5 +51,7 @@ def pr_str(v, print_readably=False):
         return "{%s}" % res
     elif v.type == 'function':
         return repr(v)
+    elif v.type == 'atom':
+        return '(atom %s)' % pr_str(v.value, print_readably)
     else:
         raise Exception("No type found: %s" % v.type)

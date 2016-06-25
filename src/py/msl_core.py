@@ -36,10 +36,13 @@ def c_slurp(fname):
 
 # atom functions
 def c_swap(atom, f, *args):
-    atom.value = f(*args)
+    print(repr(f), atom.value, args)
+    atom.value = f(atom.value, *args)
+    return atom.value
 
 def c_reset(atom, v):
-    atom.value = val
+    atom.value = v
+    return v
 
 def prn(x):
     print(printer.pr_str(x, True))
