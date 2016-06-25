@@ -200,19 +200,36 @@ def msl_eval(ast, env):
                             env = f.__gen__env(d.values[1:])
                             continue
                         else:
-                            print(f)
-                            return f(*d.values[1:])
+                            if callable(f):
+                                return f(*d.values[1:])
+            # my beautiful hack
             elif isinstance(ast, mtypes.MslPList):
                 possible_fname = ast[0]
 
                 print('pfname', possible_fname)
 
+                '''
+                TODO:
+
+                msl> `(1 2 (3 4))
+                pfname List([Symbol('cons'), Number(3), P_List([Number(4)])])
+                pfname Number(4)
+                (1 2 3 4)
+
+                should give (1 2 (3 4))
+
+                '''
+
                 if isinstance(possible_fname, mtypes.MslList):
                     if isinstance(possible_fname[0], mtypes.MslSymbol):
                         if env.find(possible_fname[0].symval):
-                            print("got func %s in plist" % possible_fname[0].symval)
-                            ast = mtypes.MslList(ast.values)
-                            continue
+                            '''print("got func %s in plist" % possible_fname[0].symval)
+                            print("fargs %r" % possible_fname[1:])'''
+
+                            d = eval_ast(possible_fname, env)
+                            f = d[0]
+                            # ast = mtypes.MslList(ast.values)
+                            return f(*d.values[1:])
             else:
                 return eval_ast(ast, env)
         else:
