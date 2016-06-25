@@ -28,11 +28,12 @@ def is_pair(x):
         return False
 
 def quasiquote(ast):
-    print(ast)
+    print('ast', ast)
     if isinstance(ast, mtypes.MslList) or isinstance(ast, list):
-        print('0', ast[0])
-        print('islist[0]', isinstance(ast[0], mtypes.MslList))
-        print("ispair[ast]", is_pair(ast))
+        if len(ast) > 0:
+            print('0', ast[0])
+            print('islist[0]', isinstance(ast[0], mtypes.MslList))
+            print("ispair[ast]", is_pair(ast))
 
     if not is_pair(ast):
         return mtypes.MslList([
@@ -41,8 +42,16 @@ def quasiquote(ast):
         ])
 
     elif isinstance(ast[0], mtypes.MslList) or isinstance(ast[0], list):
-        if ast[0][0] == mtypes.MslSymbol('unquote'):
-            return ast[0][1]
+        if len(ast) == 1:
+            if ast[0][0] == mtypes.MslSymbol('unquote'):
+                return ast[0][1]
+        else:
+            if ast[0][0] == mtypes.MslSymbol('unquote'):
+                print('q1:', quasiquote(ast[1:]))
+                return mtypes.MslList([
+                    mtypes.MslSymbol('list'),
+                    ast[0][1],
+                ] + quasiquote(ast[1:]).values) # THIS IS A HACK AAAAAAAAHHHHH
 
     elif is_pair(ast[0]) and ast[0][0] == mtypes.MslSymbol("splice-unquote"):
         return mtypes.MslList([
