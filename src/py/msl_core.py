@@ -78,8 +78,8 @@ ns = {
     'read-string': reader.read_str,
     'slurp': c_slurp,
 
-    'atom', lambda x: mtypes.MslAtom(x),
-    'atom?', lambda x: isinstance(x, mtypes.MslAtom),
+    'atom': lambda x: mtypes.MslAtom(x),
+    'atom?': lambda x: isinstance(x, mtypes.MslAtom),
     'deref': lambda atom: atom.value,
     'reset!': lambda atom, val: atom.value = val,
     'swap!': c_swap,
