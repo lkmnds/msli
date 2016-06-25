@@ -1,1 +1,4 @@
 (def! not (fn* (a) (if a false true)))
+
+; load-file
+(def! load-file (fn* (f) (eval (read-string (str "(do " (slurp f) ")")))))

@@ -63,7 +63,7 @@ def msl_eval(ast, env):
 
                     if funcname == 'def!':
                         a1, a2 = ast.values[1], ast.values[2]
-                        res = a2
+                        res = msl_eval(a2, env)
                         return env.set(a1.symval, res)
 
                     elif funcname == "let*":
@@ -146,7 +146,7 @@ def main():
     initmsl = "%s/msllib/init.msl" % '/'.join(path[:-1])
     with open(initmsl, 'r') as fh:
         for line in fh.readlines():
-            msl_rep(line)
+            msl_rep(reader._unescape(line))
 
     if len(argv) < 2:
         # start REPL
