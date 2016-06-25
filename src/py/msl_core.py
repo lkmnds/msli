@@ -44,6 +44,22 @@ def c_reset(atom, v):
     atom.value = v
     return v
 
+def c_cons(x, y):
+    newlist = mtypes.MslList([])
+    newlist.append(x)
+    if isinstance(y, mtypes.MslList):
+        for el in y:
+            newlist.append(el)
+    else:
+        newlist.append(y)
+    return newlist
+
+def c_concat(*args):
+    final_lst = mtypes.MslList([])
+    for lst in args:
+        final_lst.values.extend(lst)
+    return final_lst
+
 def prn(x):
     print(printer.pr_str(x, True))
     return
@@ -90,6 +106,9 @@ ns = {
     'deref': lambda atom: atom.value,
     'reset!': c_reset,
     'swap!': c_swap,
+
+    'cons': c_cons,
+    'concat': c_concat,
 
     # bool comparators
     '=':  lambda x,y: general_op(x, y, operator.eq),

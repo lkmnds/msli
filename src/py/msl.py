@@ -18,6 +18,46 @@ import msl_error as merror
 hist_loaded = False
 hist_file = os.path.expanduser("~/.msl-history")
 
+def is_pair(x):
+    if hasattr(x, 'type'):
+        if isinstance(x, mtypes.MslList):
+            return len(x) != 0
+    elif isinstance(x, list):
+        return len(x) != 0
+    else:
+        return False
+
+def quasiquote(ast):
+    print(ast)
+    if isinstance(ast, mtypes.MslList) or isinstance(ast, list):
+        print('0', ast[0])
+        print('islist[0]', isinstance(ast[0], mtypes.MslList))
+        print("ispair[ast]", is_pair(ast))
+
+    if not is_pair(ast):
+        return mtypes.MslList([
+            mtypes.MslSymbol('quote'),
+            ast
+        ])
+
+    elif isinstance(ast[0], mtypes.MslList) or isinstance(ast[0], list):
+        if ast[0][0] == mtypes.MslSymbol('unquote'):
+            return ast[0][1]
+
+    elif is_pair(ast[0]) and ast[0][0] == mtypes.MslSymbol("splice-unquote"):
+        return mtypes.MslList([
+            mtypes.MslSymbol('concat'),
+            ast[0][1],
+            quasiquote(ast[1:])
+        ])
+
+    else:
+        return mtypes.MslList([
+            mtypes.MslSymbol('cons'),
+            quasiquote(ast[0]),
+            quasiquote(ast[1:]),
+        ])
+
 def msl_read(string):
     return reader.read_str(string)
 
@@ -107,6 +147,13 @@ def msl_eval(ast, env):
                     elif funcname == 'fn*':
                         a1, a2 = ast.values[1], ast.values[2]
                         return mtypes.MslFunction(msl_eval, menv.Enviroment, a2, env, a1)
+
+                    elif funcname == 'quote':
+                        return ast.values[1]
+
+                    elif funcname == 'quasiquote':
+                        ast = quasiquote(ast[1])
+                        continue
 
                     else:
                         d = eval_ast(ast, env)

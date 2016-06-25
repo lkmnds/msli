@@ -61,6 +61,12 @@ class MslSymbol(MslObject):
     def __init__(self, val=None):
         MslObject.__init__(self, 'symbol')
         self.symval = val
+
+    def __eq__(self, other):
+        if isinstance(other, MslSymbol):
+            return self.symval == other.symval
+        return False
+
     def __repr__(self):
         return "Symbol(%s)" % repr(self.symval)
 
