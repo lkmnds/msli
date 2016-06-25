@@ -5,6 +5,8 @@ argv = sys.argv
 import os
 import os.path
 
+sys.setrecursionlimit(20000)
+
 import msl_reader as reader
 import msl_printer as printer
 
@@ -20,6 +22,9 @@ def msl_read(string):
     return reader.read_str(string)
 
 def eval_ast(ast, env):
+    if not hasattr(ast, 'type'):
+        merror.error("eval_ast: Error evaluating AST(%s) %s" % (type(ast), repr(ast)))
+
     if ast.type == 'symbol':
         return env.get(ast.symval)
     elif ast.type == 'list':
@@ -44,6 +49,7 @@ def eval_ast(ast, env):
 
 def msl_eval(ast, env):
     while True:
+        # print('ast', repr(ast))
         if hasattr(ast, 'type'):
             if ast.type == 'list':
                 if len(ast) == 0:
@@ -76,21 +82,25 @@ def msl_eval(ast, env):
                         sys.exit(a1.num)
 
                     elif funcname == 'do':
-                        eval_ast(ast.values[1:-1], env)
+                        vals = mtypes.MslList(ast.values[1:-1])
+                        eval_ast(vals, env)
                         ast = ast[-1]
 
                     elif funcname == 'if':
-                        a1 = ast.values[1]
-                        ret = msl_eval(a1, env)
+                        a1, a2 = ast.values[1], ast.values[2]
 
                         cond = msl_eval(a1, env)
-                        if cond is None or cond is False:
+
+                        if (cond == None) or (not cond):
                             if len(ast.values) > 3:
                                 ast = ast.values[3]
+                                continue
                             else:
                                 ast = None
+                                continue
                         else:
-                            ast = ast.values[2]
+                            ast = a2
+                            continue
 
                     elif funcname == 'fn*':
                         a1, a2 = ast.values[1], ast.values[2]
@@ -108,27 +118,6 @@ def msl_eval(ast, env):
                             env = f.__gen__env(d.values[1:])
                         else:
                             return f(*d.values[1:])
-
-                        '''
-                        if hasattr(funcname, 'type'):
-                            if funcname.type == 'function':
-                                # function call(maybe?)
-                                func_call = funcname
-                            elif funcname.type == 'list':
-                                # got lambda
-                                func_call = msl_eval(funcname, env)
-                                func_type = 'decl'
-                            else:
-                                # just as usual, get from the env
-                                func_call = envfunc.get(funcname)
-                        else:
-                            func_call = envfunc.get(funcname)
-
-                        if func_call == None:
-                            raise Exception("No function %s found" % funcname)
-
-                        return func_call(*fargs)
-                        '''
             else:
                 return eval_ast(ast, env)
         else:
@@ -143,7 +132,10 @@ for key in mcore.ns:
     repl_env.set(key, mcore.ns[key])
 
 def msl_rep(string):
-    return msl_print(msl_eval(msl_read(string), repl_env))
+    try:
+        return msl_print(msl_eval(msl_read(string), repl_env))
+    except RuntimeError as e:
+        merror.error("Runtime Error: %s" % str(e))
 
 def main():
     # repl loop
