@@ -1,5 +1,6 @@
 
 import msl_printer as printer
+import msl_reader as reader
 
 import msl_types as mtypes
 
@@ -26,6 +27,12 @@ def c_prn(*args):
 def c_println(*args):
     print(" ".join(map(lambda exp: printer.pr_str(exp, False), args)))
     return mtypes.MslNil()
+
+def c_slurp(fname):
+    res = ''
+    with open(fname) as f:
+        res = f.read()
+    return mtypes.MslStr(res)
 
 def prn(x):
     print(printer.pr_str(x, True))
@@ -64,6 +71,9 @@ ns = {
     'str': c_str,
     'prn': c_prn,
     'println': c_println,
+
+    'read-string': reader.read_str,
+    'slurp': c_slurp,
 
     # bool comparators
     '=':  lambda x,y: general_op(x, y, operator.eq),

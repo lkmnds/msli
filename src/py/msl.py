@@ -63,7 +63,7 @@ def msl_eval(ast, env):
 
                     if funcname == 'def!':
                         a1, a2 = ast.values[1], ast.values[2]
-                        res = msl_eval(a2, env)
+                        res = a2
                         return env.set(a1.symval, res)
 
                     elif funcname == "let*":
@@ -110,10 +110,7 @@ def msl_eval(ast, env):
                         d = eval_ast(ast, env)
                         f = d[0]
 
-                        print(f)
-
                         if hasattr(f, '__ast__'):
-                            print("got __ast__ func")
                             ast = f.__ast__
                             env = f.__gen__env(d.values[1:])
                         else:
@@ -130,6 +127,8 @@ def msl_print(exp):
 repl_env = menv.Enviroment()
 for key in mcore.ns:
     repl_env.set(key, mcore.ns[key])
+
+repl_env.set('eval', lambda ast: msl_eval(ast, repl_env))
 
 def msl_rep(string):
     try:
