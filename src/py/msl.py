@@ -90,7 +90,7 @@ def quasiquote(ast, qflag=False):
             lst = [
                 quasiquote(ast[0], True),
             ]
-            return mtypes.MslPList(lst)
+            return mtypes.MslList(lst)
 
 def msl_read(string):
     return reader.read_str(string)

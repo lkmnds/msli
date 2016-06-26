@@ -57,13 +57,13 @@ def c_cons(x, y):
 
 def c_cons(x, seq):
     print('params', x, seq)
-    lst = [x]
-    if isinstance(seq, mtypes.MslPList):
-        lst += [seq]
-    else:
-        lst += seq
-    print('lst', lst)
-    return mtypes.MslList(lst)
+    lst1 = mtypes.MslList([x])
+    lst2 = mtypes.MslList([seq])
+    print('lst1', lst1)
+    print('lst2', lst2)
+    res = lst1.values + lst2.values
+    print('res', res)
+    return mtypes.MslList(res)
 
 def c_concat(*args):
     final_lst = mtypes.MslList([])
