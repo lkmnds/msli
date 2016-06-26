@@ -7,6 +7,22 @@ import os.path
 
 # sys.setrecursionlimit(20000)
 
+'''
+
+public static void comparar_cagao(Pessoa pessoa){
+    return pessoa.merda;
+}
+
+public static void banheiro(){
+    if(precisa_cagar(pessoa)){
+        cagar();
+    }else{
+        sair_do_banheiro();
+    }
+}
+
+'''
+
 import msl_reader as reader
 import msl_printer as printer
 
@@ -27,27 +43,9 @@ def is_pair(x):
     else:
         return False
 
-def quasiquote(ast):
-    if not is_pair(ast):
-        return types._list(types._symbol("quote"),
-                           ast)
-    elif ast[0] == 'unquote':
-        return ast[1]
-    elif is_pair(ast[0]) and ast[0][0] == 'splice-unquote':
-        return types._list(types._symbol("concat"),
-                           ast[0][1],
-                           quasiquote(ast[1:]))
-    else:
-        return types._list(types._symbol("cons"),
-                           quasiquote(ast[0]),
-                           quasiquote(ast[1:]))
-
 def quasiquote(ast, qflag=False):
+    print("qquote", ast)
     if not is_pair(ast):
-        '''return mtypes.MslList([
-            mtypes.MslSymbol("quote"),
-            ast
-        ])'''
         if isinstance(ast, mtypes.MslList):
             if len(ast) > 0:
                 return ast[0]

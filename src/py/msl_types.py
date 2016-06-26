@@ -31,6 +31,10 @@ class MslList(MslObject):
         self.values.append(v)
         self._update()
 
+    def extend(self, v):
+        self.values.extend(v)
+        self._update()
+
     def __getitem__(self, i):
         return self.values[i]
 
