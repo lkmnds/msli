@@ -45,6 +45,7 @@ def c_reset(atom, v):
     return v
 
 def c_cons(x, y):
+    print(x, y)
     newlist = mtypes.MslList([])
     newlist.append(x)
     if isinstance(y, mtypes.MslList):
@@ -53,6 +54,16 @@ def c_cons(x, y):
     else:
         newlist.append(y)
     return newlist
+
+def c_cons(x, seq):
+    print('params', x, seq)
+    lst = [x]
+    if isinstance(seq, mtypes.MslPList):
+        lst += [seq]
+    else:
+        lst += seq
+    print('lst', lst)
+    return mtypes.MslList(lst)
 
 def c_concat(*args):
     final_lst = mtypes.MslList([])
