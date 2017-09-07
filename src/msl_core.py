@@ -146,4 +146,6 @@ ns = {
 
     'and': lambda x, y: general_op(x, y, operator.and_),
     'or': lambda x, y: general_op(x, y, operator.or_),
+
+    'python-eval': lambda x: eval(x),
 }
