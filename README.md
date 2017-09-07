@@ -1,14 +1,11 @@
 # msli
-My Simple Language Intepreter
 
-## Basics
-
-(WIP)
+https://github.com/kanaka/mal stuff.
 
 ## Using
 
 ```bash
 git clone https://github.com/lkmnds/msli.git
 cd msli
-python msl.py hello.msl
+python3.6 src/msl.py hello.msl
 ```
