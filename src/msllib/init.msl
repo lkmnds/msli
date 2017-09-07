@@ -1,4 +1,9 @@
+; initialization file for msl standard lib
+
 (def! not (fn* (a) (if a false true)))
 
 ; load-file
+; -> receives 1 string, the file path
+;   this reads the file and evaluates it.
 (def! load-file (fn* (f) (eval (read-string (str "(do " (slurp f) ")")))))
+
