@@ -100,6 +100,9 @@ class MslNumber(MslObject):
     def __truediv__(self, other):
         return MslNumber(self.num / other.num)
 
+    def __pow__(self, other):
+        return MslNumber(pow(self.num, other.num))
+
     # comparison functions
     def __eq__(self, other):
         if isinstance(other, MslNumber):

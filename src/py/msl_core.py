@@ -96,6 +96,7 @@ ns = {
     '-': lambda x,y: general_op(x, y, operator.sub),
     '/': lambda x,y: general_op(x, y, operator.truediv),
     '*': lambda x,y: general_op(x, y, operator.mul),
+    'pow': lambda x,y: general_op(x, y, pow),
 
     # step3 functions
     'list': make_list,
