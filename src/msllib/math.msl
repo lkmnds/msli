@@ -1,0 +1,14 @@
+
+; abs
+; absolute value of a number
+; always returns a positive number
+(def! abs (fn* (n) (if (< n 0) (* -1 n) n)))
+
+; max
+; returns the maximum of two numbers
+(def! max (fn* (a b) (if (> a b) a b)))
+
+; min
+; returns the minimum of two numbers
+(def! min (fn* (a b) (if (< a b) a b)))
+

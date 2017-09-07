@@ -242,6 +242,7 @@ def main():
 
     stdlib_list = [
         'init',
+        'math',
     ]
     stdlib = [f"{'/'.join(path[:-1])}/msllib/{libname}.msl" for libname in stdlib_list]
 

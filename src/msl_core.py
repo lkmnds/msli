@@ -92,11 +92,12 @@ def cmp_type(x, t):
 
 ns = {
     # Maths.
-    '+': lambda x,y: general_op(x, y, operator.add),
-    '-': lambda x,y: general_op(x, y, operator.sub),
-    '/': lambda x,y: general_op(x, y, operator.truediv),
-    '*': lambda x,y: general_op(x, y, operator.mul),
-    'pow': lambda x,y: general_op(x, y, pow),
+    '+': lambda x, y: general_op(x, y, operator.add),
+    '-': lambda x, y: general_op(x, y, operator.sub),
+    '/': lambda x, y: general_op(x, y, operator.truediv),
+    '*': lambda x, y: general_op(x, y, operator.mul),
+    '%': lambda x, y: general_op(x, y, operator.mod),
+    'pow': lambda x, y: general_op(x, y, pow),
 
     # step3 functions
     'list': make_list,
