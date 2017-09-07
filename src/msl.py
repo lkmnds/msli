@@ -5,24 +5,6 @@ argv = sys.argv
 import os
 import os.path
 
-# sys.setrecursionlimit(20000)
-
-'''
-
-public static void comparar_cagao(Pessoa pessoa){
-    return pessoa.merda;
-}
-
-public static void banheiro(){
-    if(precisa_cagar(pessoa)){
-        cagar();
-    }else{
-        sair_do_banheiro();
-    }
-}
-
-'''
-
 import msl_reader as reader
 import msl_printer as printer
 
@@ -153,7 +135,7 @@ def msl_eval(ast, env):
                     elif funcname == 'exit' or funcname == 'quit':
                         a1 = ast.values[1]
                         if not isinstance(a1, mtypes.MslNumber):
-                            raise Exception("A number is required")
+                            raise RuntimeError('A number is required')
                         sys.exit(a1.num)
 
                     elif funcname == 'do':
@@ -257,10 +239,18 @@ def main():
     print("msl v%s b%d" % (mtypes.MSL_VERSION, mtypes.MSL_BUILD))
 
     path = (os.path.realpath(__file__)).split('/')
-    initmsl = "%s/msllib/init.msl" % '/'.join(path[:-1])
-    with open(initmsl, 'r') as fh:
-        for line in fh.readlines():
-            msl_rep(reader._unescape(line))
+
+    stdlib_list = [
+        'init',
+    ]
+    stdlib = [f"{'/'.join(path[:-1])}/msllib/{libname}.msl" for libname in stdlib_list]
+
+    # read the standard lib
+    for fpath in stdlib:
+        print(f'reading {fpath}')
+        with open(fpath, 'r') as fh:
+            for line in fh.readlines():
+                msl_rep(reader._unescape(line))
 
     if len(argv) < 2:
         # start REPL
