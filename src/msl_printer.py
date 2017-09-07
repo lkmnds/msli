@@ -14,7 +14,7 @@ def pr_str(v, print_readably=False):
             if msl_type != None:
                 v = msl_type
             else:
-                raise RuntimeError('pr-str: Invalid type(got {type(v)})')
+                raise RuntimeError(f'pr-str: Invalid type(got {type(v)})')
         else:
             return
 
@@ -30,7 +30,7 @@ def pr_str(v, print_readably=False):
     elif v.type == 'nil':
         return 'nil'
     elif v.type == 'bool':
-        return str(v.value)
+        return str(v.value).lower()
     elif v.type == 'plist':
         res = []
         for el in v.values:

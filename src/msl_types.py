@@ -1,4 +1,7 @@
+import inspect
+
 import msl_error as merror
+import msl_env as menv
 
 MSL_VERSION = '0.0.0'
 MSL_BUILD = 2
@@ -264,8 +267,10 @@ class MslHashmap(MslObject):
 class MslFunction(MslObject):
     def __init__(self, evalfunc, envclass, ast, env, params):
         MslObject.__init__(self, 'function')
+
         def fn(*args):
             return evalfunc(ast, envclass(env, params, MslList(args)))
+
         fn.__meta__ = None
         fn.__ast__ = ast
         fn.__gen_env__ = lambda args: envclass(env, params, args)
@@ -302,6 +307,14 @@ def py_to_msl(obj):
             feeder.append(k)
             feeder.append(obj[k])
         return MslHashmap(feeder)
+    elif callable(obj):
+        params = []
+        sig = inspect.signature(obj)
+        for param in sig.parameters:
+            param_obj = sig.parameters[param]
+            params.append(param_obj.name)
+
+        return MslFunction(obj, menv.Enviroment, None, None, params)
     else:
         merror.error("pytomsl: no instance found of %s" % type(obj))
         return None
