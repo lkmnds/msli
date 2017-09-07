@@ -191,10 +191,11 @@ class MslBool(MslObject):
 class MslKeyword(MslObject):
     def __init__(self, val):
         MslObject.__init__(self, 'keyword')
-        if val[0] == "\u029e":
+
+        if val.startswith("\u029e"):
             self.value = val
         else:
-            self.value = "\u029e" + val
+            self.value = f'\u029e{val}'
 
     def __eq__(self, other):
         return self.value == other.value

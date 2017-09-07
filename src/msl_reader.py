@@ -1,6 +1,9 @@
-import msl_types as mtypes
 import re
 import copy
+
+import msl_types as mtypes
+import msl_error as merror
+
 
 class Reader:
     def __init__(self, tok):
@@ -17,9 +20,11 @@ class Reader:
         else:
             return None
 
+
 def tokenize(str):
     tre = re.compile(r"""[\s,]*(~@|[\[\]{}()'`~^@]|"(?:[\\].|[^\\"])*"?|;.*|[^\s\[\]{}()'"`@,;]+)""");
     return [t for t in re.findall(tre, str) if t[0] != ';']
+
 
 def read_form(reader):
     tok = reader.peek()
@@ -109,18 +114,23 @@ def read_seq(reader, start='(', end=')', init=mtypes.MslList):
 
     return ast
 
+
 def read_vector(reader):
     return read_seq(reader, '[', ']', mtypes.MslVector)
+
 
 def read_hashmap(reader):
     lst = read_seq(reader, '{', '}', list)
     return mtypes.MslHashmap(lst)
 
+
 def read_list(reader):
     return read_seq(reader, '(', ')')
 
+
 def _unescape(s):
     return s.replace('\\"', '"').replace('\\n', '\n').replace('\\\\', '\\')
+
 
 def read_atom(reader):
     int_re = re.compile(r"-?[0-9]+$")
@@ -135,7 +145,7 @@ def read_atom(reader):
         if token[-1] == '"':
             return mtypes.MslStr(_unescape(token[1:-1]))
         else:
-            raise Exception("Expected '\"', got EOF")
+            merror.error('Expected ", got EOF')
     elif token[0] == ':':
         return mtypes.MslKeyword(token[1:])
     elif token == 'nil':
@@ -146,6 +156,7 @@ def read_atom(reader):
         return mtypes.MslBool(False)
     else:
         return mtypes.MslSymbol(token)
+
 
 def read_str(string):
     ast = []

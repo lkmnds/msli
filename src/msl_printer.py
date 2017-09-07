@@ -63,5 +63,7 @@ def pr_str(v, print_readably=False):
         return repr(v)
     elif v.type == 'atom':
         return '(atom %s)' % pr_str(v.value, print_readably)
+    elif v.type == 'keyword':
+        return {v.value}
     else:
-        raise Exception("No type found: %s" % v.type)
+        raise RuntimeError(f"Can't print {v.type}")
