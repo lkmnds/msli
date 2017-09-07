@@ -1,32 +1,37 @@
+import operator
 
 import msl_printer as printer
 import msl_reader as reader
-
 import msl_types as mtypes
 
-import operator
 
 def treat(x):
     if not hasattr(x, 'type'):
         x = mtypes.py_to_msl(x)
     return x
 
+
 def make_list(*args):
     return mtypes.MslList(args)
+
 
 def c_pr_str(*args):
     return " ".join(map(lambda exp: printer.pr_str(exp, True), args))
 
+
 def c_str(*args):
     return "".join(map(lambda exp: printer.pr_str(exp, False), args))
+
 
 def c_prn(*args):
     print(" ".join(map(lambda exp: printer.pr_str(exp, True), args)))
     return mtypes.MslNil()
 
+
 def c_println(*args):
     print(" ".join(map(lambda exp: printer.pr_str(exp, False), args)))
     return mtypes.MslNil()
+
 
 def c_slurp(fname):
     res = ''
@@ -34,15 +39,18 @@ def c_slurp(fname):
         res = f.read()
     return mtypes.MslStr(res)
 
+
 # atom functions
 def c_swap(atom, f, *args):
     print(repr(f), atom.value, args)
     atom.value = f(atom.value, *args)
     return atom.value
 
+
 def c_reset(atom, v):
     atom.value = v
     return v
+
 
 def c_cons(x, y):
     print(x, y)
@@ -55,6 +63,7 @@ def c_cons(x, y):
         newlist.append(y)
     return newlist
 
+
 def c_cons(x, seq):
     print('params', x, seq)
     lst1 = mtypes.MslList([x])
@@ -65,15 +74,18 @@ def c_cons(x, seq):
     print('res', res)
     return mtypes.MslList(res)
 
+
 def c_concat(*args):
     final_lst = mtypes.MslList([])
     for lst in args:
         final_lst.values.extend(lst)
     return final_lst
 
+
 def prn(x):
     print(printer.pr_str(x, True))
     return
+
 
 def general_op(x, y, op):
     # treat x and y as mtypes
@@ -85,10 +97,12 @@ def general_op(x, y, op):
 
     return op(x, y)
 
+
 def cmp_type(x, t):
     if not hasattr(x, 'type'):
         x = mtypes.py_to_msl(x)
     return isinstance(x, t)
+
 
 ns = {
     # Maths.
