@@ -5,13 +5,16 @@ def _escape(s):
     return s.replace('\\', '\\\\').replace('"', '\\"').replace('\n', '\\n')
 
 def pr_str(v, print_readably=False):
+    """Convert a MSL data type into
+    its string representation to be printed.
+    """
     if not hasattr(v, 'type'):
-        if v != None:
+        if v:
             msl_type = mtypes.py_to_msl(v)
             if msl_type != None:
                 v = msl_type
             else:
-                raise Exception("pr_str: Invalid type to print(got %s)" % type(v))
+                raise RuntimeError('pr-str: Invalid type(got {type(v)})')
         else:
             return
 
