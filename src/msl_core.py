@@ -132,12 +132,16 @@ ns = {
     'read-string': reader.read_str,
     'slurp': c_slurp,
 
+    # type functions
     'atom': lambda x: mtypes.MslAtom(x),
     'atom?': lambda x: isinstance(x, mtypes.MslAtom),
     'deref': lambda atom: atom.value,
     'reset!': c_reset,
     'swap!': c_swap,
 
+    'symbol': lambda s: mtypes.MslSymbol(s),
+
+    # ??
     'cons': c_cons,
     'concat': c_concat,
 
@@ -151,6 +155,7 @@ ns = {
     'and': lambda x, y: general_op(x, y, operator.and_),
     'or': lambda x, y: general_op(x, y, operator.or_),
 
+    # misc
     'python-eval': lambda x: eval(x),
     'msl-type': get_type,
 }
