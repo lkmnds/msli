@@ -104,6 +104,10 @@ def cmp_type(x, t):
     return isinstance(x, t)
 
 
+def get_type(x):
+    return x.__class__.__name__
+
+
 ns = {
     # Maths.
     '+': lambda x, y: general_op(x, y, operator.add),
@@ -148,4 +152,5 @@ ns = {
     'or': lambda x, y: general_op(x, y, operator.or_),
 
     'python-eval': lambda x: eval(x),
+    'msl-type': get_type,
 }
