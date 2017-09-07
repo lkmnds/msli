@@ -129,4 +129,7 @@ ns = {
     '<=': lambda x,y: general_op(x, y, operator.le),
     '>':  lambda x,y: general_op(x, y, operator.gt),
     '>=': lambda x,y: general_op(x, y, operator.ge),
+
+    'and': lambda x, y: general_op(x, y, operator.and_),
+    'or': lambda x, y: general_op(x, y, operator.or_),
 }

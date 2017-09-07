@@ -172,6 +172,12 @@ class MslBool(MslObject):
     def __bool__(self):
         return self.value
 
+    def __and__(self, other):
+        return MslBool(self.value and other.value)
+
+    def __or__(self, other):
+        return MslBool(self.value or other.value)
+
     def __repr__(self):
         return "Bool(%s)" % self.value
 
