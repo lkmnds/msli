@@ -85,7 +85,14 @@ class MslSymbol(MslObject):
 class MslNumber(MslObject):
     def __init__(self, num=None):
         MslObject.__init__(self, 'num')
-        self.num = int(num)
+
+        if isinstance(num, int) or isinstance(num, float):
+            self.num = num
+        else:
+            try:
+                self.num = int(num)
+            except:
+                self.num = float(num)
 
     # operator functions
     def __add__(self, other):
