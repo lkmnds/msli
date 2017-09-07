@@ -44,6 +44,6 @@ class Enviroment:
 
         env = self.find(symbol)
         if not env:
-            raise RuntimeError('environment: Symbol {symbol!r} not found')
+            raise RuntimeError(f'environment: Symbol {symbol!r} not found')
 
         return env.data[symbol]
