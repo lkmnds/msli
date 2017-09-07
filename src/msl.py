@@ -236,7 +236,7 @@ def main():
     # repl loop
     global hist_loaded
 
-    print("msl v%s b%d" % (mtypes.MSL_VERSION, mtypes.MSL_BUILD))
+    print(f'msl {mtypes.MSL_VERSION} build {mtypes.MSL_BUILD}')
 
     path = (os.path.realpath(__file__)).split('/')
 
@@ -248,7 +248,6 @@ def main():
 
     # read the standard lib
     for fpath in stdlib:
-        print(f'reading {fpath}')
         with open(fpath, 'r') as fh:
             for line in fh.readlines():
                 msl_rep(reader._unescape(line))

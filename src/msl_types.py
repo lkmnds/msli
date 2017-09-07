@@ -4,7 +4,7 @@ import msl_error as merror
 import msl_env as menv
 
 MSL_VERSION = '0.0.0'
-MSL_BUILD = 2
+MSL_BUILD = 3
 
 class MslObject:
     def __init__(self, valtype):
